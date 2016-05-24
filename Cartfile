@@ -1,1 +1,4 @@
 github "Alamofire/Alamofire"
+github "realm/realm-cocoa"
+github "carekit-apple/CareKit"
+github "ResearchKit/ResearchKit"

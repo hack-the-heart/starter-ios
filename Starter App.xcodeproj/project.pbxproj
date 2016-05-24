@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6808CB231CF4EEB700995BEA /* CareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6808CB211CF4EEB700995BEA /* CareKit.framework */; };
+		6808CB241CF4EEB700995BEA /* ResearchKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6808CB221CF4EEB700995BEA /* ResearchKit.framework */; };
+		6808CB271CF4EEDD00995BEA /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6808CB251CF4EEDD00995BEA /* Realm.framework */; };
+		6808CB281CF4EEDD00995BEA /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6808CB251CF4EEDD00995BEA /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6808CB291CF4EEDD00995BEA /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6808CB261CF4EEDD00995BEA /* RealmSwift.framework */; };
+		6808CB2A1CF4EEDD00995BEA /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6808CB261CF4EEDD00995BEA /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8F6F739A1CF3F6550099920A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F6F73991CF3F6550099920A /* AppDelegate.swift */; };
 		8F6F739C1CF3F6550099920A /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F6F739B1CF3F6550099920A /* FirstViewController.swift */; };
 		8F6F739E1CF3F6550099920A /* SecondViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F6F739D1CF3F6550099920A /* SecondViewController.swift */; };
@@ -16,7 +22,27 @@
 		8F8215491CF3FD7A001198A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F8215481CF3FD7A001198A2 /* Alamofire.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		6808CB2B1CF4EEDD00995BEA /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6808CB2A1CF4EEDD00995BEA /* RealmSwift.framework in Embed Frameworks */,
+				6808CB281CF4EEDD00995BEA /* Realm.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		6808CB1A1CF4EBAA00995BEA /* Starter App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Starter App.entitlements"; sourceTree = "<group>"; };
+		6808CB211CF4EEB700995BEA /* CareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CareKit.framework; path = Carthage/Build/iOS/CareKit.framework; sourceTree = "<group>"; };
+		6808CB221CF4EEB700995BEA /* ResearchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ResearchKit.framework; path = Carthage/Build/iOS/ResearchKit.framework; sourceTree = "<group>"; };
+		6808CB251CF4EEDD00995BEA /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
+		6808CB261CF4EEDD00995BEA /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
 		8F6F73961CF3F6550099920A /* Starter App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Starter App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F6F73991CF3F6550099920A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8F6F739B1CF3F6550099920A /* FirstViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
@@ -33,7 +59,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6808CB271CF4EEDD00995BEA /* Realm.framework in Frameworks */,
+				6808CB291CF4EEDD00995BEA /* RealmSwift.framework in Frameworks */,
 				8F8215491CF3FD7A001198A2 /* Alamofire.framework in Frameworks */,
+				6808CB231CF4EEB700995BEA /* CareKit.framework in Frameworks */,
+				6808CB241CF4EEB700995BEA /* ResearchKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,6 +90,7 @@
 		8F6F73981CF3F6550099920A /* Starter App */ = {
 			isa = PBXGroup;
 			children = (
+				6808CB1A1CF4EBAA00995BEA /* Starter App.entitlements */,
 				8F6F73991CF3F6550099920A /* AppDelegate.swift */,
 				8F6F739B1CF3F6550099920A /* FirstViewController.swift */,
 				8F6F739D1CF3F6550099920A /* SecondViewController.swift */,
@@ -74,6 +105,10 @@
 		8F82154A1CF3FD80001198A2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6808CB251CF4EEDD00995BEA /* Realm.framework */,
+				6808CB261CF4EEDD00995BEA /* RealmSwift.framework */,
+				6808CB211CF4EEB700995BEA /* CareKit.framework */,
+				6808CB221CF4EEB700995BEA /* ResearchKit.framework */,
 				8F8215481CF3FD7A001198A2 /* Alamofire.framework */,
 			);
 			name = Frameworks;
@@ -90,6 +125,7 @@
 				8F6F73931CF3F6550099920A /* Frameworks */,
 				8F6F73941CF3F6550099920A /* Resources */,
 				8F82154B1CF3FD97001198A2 /* Carthage Script */,
+				6808CB2B1CF4EEDD00995BEA /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -112,6 +148,12 @@
 				TargetAttributes = {
 					8F6F73951CF3F6550099920A = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = PP44TBZSKC;
+						SystemCapabilities = {
+							com.apple.HealthKit = {
+								enabled = 0;
+							};
+						};
 					};
 				};
 			};
@@ -154,6 +196,11 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/CareKit.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Realm.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RealmSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/ResearchKit.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/CareKit.framework",
 			);
 			name = "Carthage Script";
 			outputPaths = (

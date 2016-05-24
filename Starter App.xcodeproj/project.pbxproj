@@ -13,6 +13,7 @@
 		8F6F73A11CF3F6550099920A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F6F739F1CF3F6550099920A /* Main.storyboard */; };
 		8F6F73A31CF3F6550099920A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F6F73A21CF3F6550099920A /* Assets.xcassets */; };
 		8F6F73A61CF3F6550099920A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F6F73A41CF3F6550099920A /* LaunchScreen.storyboard */; };
+		8F8215491CF3FD7A001198A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F8215481CF3FD7A001198A2 /* Alamofire.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		8F6F73A21CF3F6550099920A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8F6F73A51CF3F6550099920A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8F6F73A71CF3F6550099920A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8F8215481CF3FD7A001198A2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +33,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F8215491CF3FD7A001198A2 /* Alamofire.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,6 +44,7 @@
 			isa = PBXGroup;
 			children = (
 				8F6F73981CF3F6550099920A /* Starter App */,
+				8F82154A1CF3FD80001198A2 /* Frameworks */,
 				8F6F73971CF3F6550099920A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -67,6 +71,14 @@
 			path = "Starter App";
 			sourceTree = "<group>";
 		};
+		8F82154A1CF3FD80001198A2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8F8215481CF3FD7A001198A2 /* Alamofire.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -77,6 +89,7 @@
 				8F6F73921CF3F6550099920A /* Sources */,
 				8F6F73931CF3F6550099920A /* Frameworks */,
 				8F6F73941CF3F6550099920A /* Resources */,
+				8F82154B1CF3FD97001198A2 /* Carthage Script */,
 			);
 			buildRules = (
 			);
@@ -132,6 +145,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8F82154B1CF3FD97001198A2 /* Carthage Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
+			);
+			name = "Carthage Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8F6F73921CF3F6550099920A /* Sources */ = {
@@ -255,6 +286,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = "Starter App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ibm.research.hackathon.Starter-App";
@@ -266,6 +301,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = "Starter App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ibm.research.hackathon.Starter-App";
@@ -292,6 +331,7 @@
 				8F6F73AC1CF3F6550099920A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

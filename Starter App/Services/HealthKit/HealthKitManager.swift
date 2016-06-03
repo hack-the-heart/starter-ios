@@ -14,9 +14,6 @@ enum HKObjectKey: String {
     case SourceName = "sourceName"
     case HealthKitUUID = "healthkitUUID"
     case WeightValue = "weightValue"
-    case BPSystolicValue = "systolicValue"
-    case BPDiastolicValue = "diastolicValue"
-    case HeartRateValue = "heartRateValue"
 }
 
 class HealthKitManager {

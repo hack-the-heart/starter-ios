@@ -7,15 +7,35 @@
 //
 
 import UIKit
+import HealthKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    // MARK: - Properties
     var window: UIWindow?
+    
+    // MARK: HealthKit
+    
+    let readHKObjects = [
+        HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!
+    ]
+    
+    let writeHKSamples = [
+        HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!
+    ]
+    
+    let backgroundDeliveryHKSamples = [
+        HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!
+    ]
 
-
+    // MARK: - Application Lifecycle
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        // subscribe to any notifications from HealthKitManager
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(handleHKManagerNotifications(_:)), name: nil, object: HealthKitManager.sharedInstance)
+        
+        HealthKitManager.sharedInstance.initializeHealthKitManager(sampleTypesForReadAuth: readHKObjects, sampleTypesForWriteAuth: writeHKSamples, sampleTypesForBackgroundDelivery: backgroundDeliveryHKSamples)
+        
         return true
     }
 
@@ -40,7 +60,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
-
 }
 

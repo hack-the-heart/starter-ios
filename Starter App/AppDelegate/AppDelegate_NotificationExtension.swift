@@ -14,7 +14,7 @@ extension AppDelegate {
     func handleHKManagerNotifications(notification: NSNotification) {
         switch notification.name {
         case HealthKitManager.Notification.AuthorizationSuccess.rawValue:
-            break
+            HealthKitSync.saveAllHKData_ToRealmAndServer()
             
         case HealthKitManager.Notification.AuthorizatonError.rawValue:
             let alert: UIAlertController = UIAlertController(title: "HealthKit Authorization Error", message: "There seems to be an issue with getting access to your HealthKit data. Please allow access to data in the \"Sources\" tab, inside the Health app.", preferredStyle: .Alert)

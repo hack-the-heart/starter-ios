@@ -8,14 +8,15 @@
 
 import UIKit
 import HealthKit
+import RealmSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    
     // MARK: - Properties
     var window: UIWindow?
     
     // MARK: HealthKit
-    
     let readHKObjects = [
         HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!
     ]
@@ -30,11 +31,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Application Lifecycle
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        //detect if we are running on a simulator to print realm path
+        #if (arch(i386) || arch(x86_64)) && (os(iOS) || os(watchOS) || os(tvOS))
+            let realm = try! Realm()
+            print(realm.configuration.fileURL?.absoluteString)
+        #endif
         
         // subscribe to any notifications from HealthKitManager
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(handleHKManagerNotifications(_:)), name: nil, object: HealthKitManager.sharedInstance)
         
-        HealthKitManager.sharedInstance.initializeHealthKitManager(sampleTypesForReadAuth: readHKObjects, sampleTypesForWriteAuth: writeHKSamples, sampleTypesForBackgroundDelivery: backgroundDeliveryHKSamples)
+        ServerSync.fetchAllData_FromServer()
+        
+        do {
+            try HealthKitManager.sharedInstance.initializeHealthKitManager(sampleTypesForReadAuth: readHKObjects, sampleTypesForWriteAuth: writeHKSamples, sampleTypesForBackgroundDelivery: backgroundDeliveryHKSamples)
+        } catch {
+            //TODO: do something with this error
+        }
         
         return true
     }

@@ -33,3 +33,6 @@ playground.xcworkspace
 Carthage/Checkouts
 
 Carthage/Build
+
+## Temporary Ignore
+*/Starter App/Services/HealthKit/HealthKitManager.swift

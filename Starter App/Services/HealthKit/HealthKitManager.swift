@@ -36,7 +36,7 @@ class HealthKitManager {
     private var writeAuthArr: [HKSampleType] = []
     private var backgroundDeliveryArr: [HKSampleType] = []
     
-    private let hkHealthStore = HKHealthStore()
+    let hkHealthStore = HKHealthStore()
     
     // MARK: - Closures
     
@@ -74,7 +74,7 @@ class HealthKitManager {
     // MARK: - Configure
     func initializeHealthKitManager(sampleTypesForReadAuth readArr: [HKObjectType],
                                                            sampleTypesForWriteAuth writeArr: [HKSampleType],
-                                                                                   sampleTypesForBackgroundDelivery backgroundDeliveryArr: [HKSampleType]) {
+                                                                                   sampleTypesForBackgroundDelivery backgroundDeliveryArr: [HKSampleType]) throws {
         
         self.readAuthArr = readArr
         self.writeAuthArr = writeArr
@@ -86,11 +86,7 @@ class HealthKitManager {
         if HealthKitManager.sharedInstance.didConfigureHKAuth {
             HealthKitManager.sharedInstance.enableBackgroundDelivery(self.backgroundDeliveryArr)
         } else {
-            do {
-                try HealthKitManager.sharedInstance.requestHKAuthorization(sampleTypesForReadAuth: Set(self.readAuthArr), sampleTypesForWriteAuth: Set(self.writeAuthArr))
-            } catch {
-                // TODO: do something with the error
-            }
+            try HealthKitManager.sharedInstance.requestHKAuthorization(sampleTypesForReadAuth: Set(self.readAuthArr), sampleTypesForWriteAuth: Set(self.writeAuthArr))
         }
     }
     

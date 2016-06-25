@@ -11,7 +11,7 @@ import HealthKit
 import UIKit
 import RealmSwift
 
-class HealthObjectDataViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -52,20 +52,31 @@ class HealthObjectDataViewController: UIViewController, UITableViewDataSource, U
         }
         
         let realm = try! Realm()
+        var healthObject: BaseHealthObject?
         
         switch healthObjectType! {
             
         case String(Weight):
-            let allWeightObjs = realm.objects(Weight)
+            let allWeightObjs = realm.objects(Weight).sorted("date", ascending: false)
             let weightObj = allWeightObjs[indexPath.item]
+            healthObject = weightObj
             
             cell.title.text = "\(weightObj.value.value!)"
-            cell.subtitle.text = "Weight"
-            
         default:
             break
         }
         
+        if let date = healthObject?.date {
+            let formatter = NSDateFormatter()
+            formatter.dateStyle = NSDateFormatterStyle.ShortStyle
+            formatter.timeStyle = .ShortStyle
+            
+            let dateString = formatter.stringFromDate(date)
+            
+            cell.subtitle.text = dateString
+        } else {
+            cell.subtitle.text = "Unknown"
+        }
         
         return cell
     }

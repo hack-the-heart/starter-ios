@@ -49,6 +49,7 @@ class HealthKitManager {
     enum NotificationUserInfoKey: String {
         case ErrorObj = "ErrorObj"
         case HKObjects = "HKObjects"
+        case HKObjectTypeId = "HKObjectType"
     }
     
     /**
@@ -263,7 +264,7 @@ class HealthKitManager {
             return
         }
         
-        guard let sampleResults = results where sampleResults.count == 0 else {
+        guard let sampleResults = results where sampleResults.count != 0 else {
             dispatch_async(dispatch_get_main_queue(), {
                 NSNotificationCenter.defaultCenter().postNotificationName(Notification.BackgroundDeliveryResultError.rawValue, object: HealthKitManager.sharedInstance, userInfo: nil)
             })
@@ -272,8 +273,11 @@ class HealthKitManager {
         }
         
         let sampleResultsDict = sampleResults.map { $0.toDictionary() }
+        let typeIdentifier = query.objectType?.identifier
         
-        let userInfo: [String: AnyObject] = [NotificationUserInfoKey.HKObjects.rawValue: sampleResultsDict]
+        let userInfo: [String: AnyObject] = [
+            NotificationUserInfoKey.HKObjectTypeId.rawValue: typeIdentifier != nil ? typeIdentifier! : "Unknown",
+            NotificationUserInfoKey.HKObjects.rawValue: sampleResultsDict]
         
         dispatch_async(dispatch_get_main_queue(), {
             NSNotificationCenter.defaultCenter().postNotificationName(Notification.BackgroundDeliveryResultSuccess.rawValue, object: HealthKitManager.sharedInstance, userInfo: userInfo)

@@ -17,17 +17,16 @@
 		682129B91CF8762F004F3C0B /* HomeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 682129B81CF8762F004F3C0B /* HomeKit.framework */; };
 		682129C01CF87ED4004F3C0B /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 682129BF1CF87ED4004F3C0B /* HealthKitManager.swift */; };
 		682129C61CF91562004F3C0B /* HKSampleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 682129C51CF91562004F3C0B /* HKSampleExtension.swift */; };
-		686C24CD1D1A268C00467D4F /* HealthObjectDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686C24CC1D1A268C00467D4F /* HealthObjectDataViewController.swift */; };
-		6890ED011D03A25900B9759C /* AllData.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6890ED001D03A25900B9759C /* AllData.storyboard */; };
+		686C24CD1D1A268C00467D4F /* ViewSpecificDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686C24CC1D1A268C00467D4F /* ViewSpecificDataViewController.swift */; };
+		6890ED011D03A25900B9759C /* ViewData.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6890ED001D03A25900B9759C /* ViewData.storyboard */; };
 		6890ED041D03A42000B9759C /* HealthDataTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6890ED031D03A42000B9759C /* HealthDataTableViewCell.swift */; };
-		6890ED071D03AE7C00B9759C /* AppDelegate_NotificationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6890ED061D03AE7C00B9759C /* AppDelegate_NotificationExtension.swift */; };
 		6890ED0B1D03C75400B9759C /* HealthKitSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6890ED0A1D03C75400B9759C /* HealthKitSync.swift */; };
 		6890ED0F1D049EBF00B9759C /* ObjectIDMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6890ED0E1D049EBF00B9759C /* ObjectIDMap.swift */; };
 		6890ED131D04A15300B9759C /* ServerSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6890ED121D04A15300B9759C /* ServerSync.swift */; };
 		68C949511D01125000199864 /* Weight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68C949501D01125000199864 /* Weight.swift */; };
 		68C949531D01127400199864 /* BaseHealthObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68C949521D01127400199864 /* BaseHealthObject.swift */; };
 		8F6F739A1CF3F6550099920A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F6F73991CF3F6550099920A /* AppDelegate.swift */; };
-		8F6F739C1CF3F6550099920A /* AllDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F6F739B1CF3F6550099920A /* AllDataViewController.swift */; };
+		8F6F739C1CF3F6550099920A /* ViewDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F6F739B1CF3F6550099920A /* ViewDataViewController.swift */; };
 		8F6F739E1CF3F6550099920A /* SecondViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F6F739D1CF3F6550099920A /* SecondViewController.swift */; };
 		8F6F73A11CF3F6550099920A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F6F739F1CF3F6550099920A /* Main.storyboard */; };
 		8F6F73A31CF3F6550099920A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F6F73A21CF3F6550099920A /* Assets.xcassets */; };
@@ -60,10 +59,9 @@
 		682129B81CF8762F004F3C0B /* HomeKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HomeKit.framework; path = System/Library/Frameworks/HomeKit.framework; sourceTree = SDKROOT; };
 		682129BF1CF87ED4004F3C0B /* HealthKitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
 		682129C51CF91562004F3C0B /* HKSampleExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKSampleExtension.swift; sourceTree = "<group>"; };
-		686C24CC1D1A268C00467D4F /* HealthObjectDataViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HealthObjectDataViewController.swift; sourceTree = "<group>"; };
-		6890ED001D03A25900B9759C /* AllData.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AllData.storyboard; sourceTree = "<group>"; };
+		686C24CC1D1A268C00467D4F /* ViewSpecificDataViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewSpecificDataViewController.swift; sourceTree = "<group>"; };
+		6890ED001D03A25900B9759C /* ViewData.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ViewData.storyboard; sourceTree = "<group>"; };
 		6890ED031D03A42000B9759C /* HealthDataTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HealthDataTableViewCell.swift; sourceTree = "<group>"; };
-		6890ED061D03AE7C00B9759C /* AppDelegate_NotificationExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate_NotificationExtension.swift; sourceTree = "<group>"; };
 		6890ED0A1D03C75400B9759C /* HealthKitSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HealthKitSync.swift; sourceTree = "<group>"; };
 		6890ED0E1D049EBF00B9759C /* ObjectIDMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjectIDMap.swift; sourceTree = "<group>"; };
 		6890ED121D04A15300B9759C /* ServerSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerSync.swift; sourceTree = "<group>"; };
@@ -71,7 +69,7 @@
 		68C949521D01127400199864 /* BaseHealthObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseHealthObject.swift; sourceTree = "<group>"; };
 		8F6F73961CF3F6550099920A /* Starter App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Starter App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F6F73991CF3F6550099920A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		8F6F739B1CF3F6550099920A /* AllDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllDataViewController.swift; sourceTree = "<group>"; };
+		8F6F739B1CF3F6550099920A /* ViewDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDataViewController.swift; sourceTree = "<group>"; };
 		8F6F739D1CF3F6550099920A /* SecondViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondViewController.swift; sourceTree = "<group>"; };
 		8F6F73A01CF3F6550099920A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8F6F73A21CF3F6550099920A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -153,9 +151,9 @@
 		6890ECFF1D03A23800B9759C /* View Data */ = {
 			isa = PBXGroup;
 			children = (
-				6890ED001D03A25900B9759C /* AllData.storyboard */,
-				8F6F739B1CF3F6550099920A /* AllDataViewController.swift */,
-				686C24CC1D1A268C00467D4F /* HealthObjectDataViewController.swift */,
+				6890ED001D03A25900B9759C /* ViewData.storyboard */,
+				8F6F739B1CF3F6550099920A /* ViewDataViewController.swift */,
+				686C24CC1D1A268C00467D4F /* ViewSpecificDataViewController.swift */,
 				6890ED021D03A3B600B9759C /* Views */,
 			);
 			name = "View Data";
@@ -174,7 +172,6 @@
 			isa = PBXGroup;
 			children = (
 				8F6F73991CF3F6550099920A /* AppDelegate.swift */,
-				6890ED061D03AE7C00B9759C /* AppDelegate_NotificationExtension.swift */,
 			);
 			path = AppDelegate;
 			sourceTree = "<group>";
@@ -321,7 +318,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6890ED011D03A25900B9759C /* AllData.storyboard in Resources */,
+				6890ED011D03A25900B9759C /* ViewData.storyboard in Resources */,
 				8F6F73A61CF3F6550099920A /* LaunchScreen.storyboard in Resources */,
 				8F6F73A31CF3F6550099920A /* Assets.xcassets in Resources */,
 				8F6F73A11CF3F6550099920A /* Main.storyboard in Resources */,
@@ -360,16 +357,15 @@
 			files = (
 				8F6F739E1CF3F6550099920A /* SecondViewController.swift in Sources */,
 				68C949531D01127400199864 /* BaseHealthObject.swift in Sources */,
-				6890ED071D03AE7C00B9759C /* AppDelegate_NotificationExtension.swift in Sources */,
 				6890ED131D04A15300B9759C /* ServerSync.swift in Sources */,
 				6890ED0B1D03C75400B9759C /* HealthKitSync.swift in Sources */,
-				686C24CD1D1A268C00467D4F /* HealthObjectDataViewController.swift in Sources */,
+				686C24CD1D1A268C00467D4F /* ViewSpecificDataViewController.swift in Sources */,
 				682129C61CF91562004F3C0B /* HKSampleExtension.swift in Sources */,
 				8F6F739A1CF3F6550099920A /* AppDelegate.swift in Sources */,
 				6890ED041D03A42000B9759C /* HealthDataTableViewCell.swift in Sources */,
 				682129C01CF87ED4004F3C0B /* HealthKitManager.swift in Sources */,
 				6890ED0F1D049EBF00B9759C /* ObjectIDMap.swift in Sources */,
-				8F6F739C1CF3F6550099920A /* AllDataViewController.swift in Sources */,
+				8F6F739C1CF3F6550099920A /* ViewDataViewController.swift in Sources */,
 				68C949511D01125000199864 /* Weight.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

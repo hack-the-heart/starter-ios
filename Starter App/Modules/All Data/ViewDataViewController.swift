@@ -10,7 +10,7 @@ import UIKit
 import HealthKit
 import RealmSwift
 
-class AllDataViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class ViewDataViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -31,7 +31,7 @@ class AllDataViewController: UIViewController, UITableViewDataSource, UITableVie
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "DisplayHealthObjectData",
             let selectedHealthObject = self.selectedHealthObject,
-            let viewController = segue.destinationViewController as? HealthObjectDataViewController {
+            let viewController = segue.destinationViewController as? ViewSpecificDataViewController {
             
             viewController.healthObjectType = selectedHealthObject
             

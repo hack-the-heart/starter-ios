@@ -1,0 +1,41 @@
+PODS:
+  - CDTDatastore (1.1.1):
+    - CDTDatastore/standard (= 1.1.1)
+  - CDTDatastore/common-dependencies (1.1.1):
+    - CDTDatastore/no-arc
+    - CocoaLumberjack (~> 2.0)
+  - CDTDatastore/no-arc (1.1.1)
+  - CDTDatastore/standard (1.1.1):
+    - CDTDatastore/common-dependencies
+    - FMDB (= 2.6)
+  - CocoaLumberjack (2.3.0):
+    - CocoaLumberjack/Default (= 2.3.0)
+    - CocoaLumberjack/Extensions (= 2.3.0)
+  - CocoaLumberjack/Core (2.3.0)
+  - CocoaLumberjack/Default (2.3.0):
+    - CocoaLumberjack/Core
+  - CocoaLumberjack/Extensions (2.3.0):
+    - CocoaLumberjack/Default
+  - FMDB (2.6):
+    - FMDB/standard (= 2.6)
+  - FMDB/standard (2.6)
+  - Realm (1.0.1):
+    - Realm/Headers (= 1.0.1)
+  - Realm/Headers (1.0.1)
+  - RealmSwift (1.0.1):
+    - Realm (= 1.0.1)
+
+DEPENDENCIES:
+  - CDTDatastore
+  - RealmSwift
+
+SPEC CHECKSUMS:
+  CDTDatastore: dcbc597b3352602556e003d4a8d1cc93c1c119ce
+  CocoaLumberjack: 97fab7ee5f507fe54445cca7ea80f926729cfd15
+  FMDB: c1968bab3ab0aed38f66cb778ae1e7fa9a652b6e
+  Realm: 2e15e39d35b08abb529e212ed5d8af107b5236c8
+  RealmSwift: d73ea2af08c3676dbdd5e4b669651a0f492162a4
+
+PODFILE CHECKSUM: de18e99aba108a9c53bf21c2cd7af34c0c20262c
+
+COCOAPODS: 1.0.1

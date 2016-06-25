@@ -7,14 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6808CB231CF4EEB700995BEA /* CareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6808CB211CF4EEB700995BEA /* CareKit.framework */; };
-		6808CB241CF4EEB700995BEA /* ResearchKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6808CB221CF4EEB700995BEA /* ResearchKit.framework */; };
-		6808CB271CF4EEDD00995BEA /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6808CB251CF4EEDD00995BEA /* Realm.framework */; };
-		6808CB281CF4EEDD00995BEA /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6808CB251CF4EEDD00995BEA /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6808CB291CF4EEDD00995BEA /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6808CB261CF4EEDD00995BEA /* RealmSwift.framework */; };
-		6808CB2A1CF4EEDD00995BEA /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6808CB261CF4EEDD00995BEA /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		682129B71CF875F7004F3C0B /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 682129B61CF875F7004F3C0B /* HealthKit.framework */; };
-		682129B91CF8762F004F3C0B /* HomeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 682129B81CF8762F004F3C0B /* HomeKit.framework */; };
 		682129C01CF87ED4004F3C0B /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 682129BF1CF87ED4004F3C0B /* HealthKitManager.swift */; };
 		682129C61CF91562004F3C0B /* HKSampleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 682129C51CF91562004F3C0B /* HKSampleExtension.swift */; };
 		686C24CD1D1A268C00467D4F /* ViewSpecificDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686C24CC1D1A268C00467D4F /* ViewSpecificDataViewController.swift */; };
@@ -31,25 +23,11 @@
 		8F6F73A11CF3F6550099920A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F6F739F1CF3F6550099920A /* Main.storyboard */; };
 		8F6F73A31CF3F6550099920A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F6F73A21CF3F6550099920A /* Assets.xcassets */; };
 		8F6F73A61CF3F6550099920A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F6F73A41CF3F6550099920A /* LaunchScreen.storyboard */; };
-		8F8215491CF3FD7A001198A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F8215481CF3FD7A001198A2 /* Alamofire.framework */; };
+		C690580B771D38554FED2E4C /* Pods_Starter_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5511AC7BFFED1BFF6F4B833B /* Pods_Starter_App.framework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		6808CB2B1CF4EEDD00995BEA /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				6808CB2A1CF4EEDD00995BEA /* RealmSwift.framework in Embed Frameworks */,
-				6808CB281CF4EEDD00995BEA /* Realm.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		5511AC7BFFED1BFF6F4B833B /* Pods_Starter_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Starter_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6808CB1A1CF4EBAA00995BEA /* Starter App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Starter App.entitlements"; sourceTree = "<group>"; };
 		6808CB211CF4EEB700995BEA /* CareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CareKit.framework; path = Carthage/Build/iOS/CareKit.framework; sourceTree = "<group>"; };
 		6808CB221CF4EEB700995BEA /* ResearchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ResearchKit.framework; path = Carthage/Build/iOS/ResearchKit.framework; sourceTree = "<group>"; };
@@ -67,6 +45,7 @@
 		6890ED121D04A15300B9759C /* ServerSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerSync.swift; sourceTree = "<group>"; };
 		68C949501D01125000199864 /* Weight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Weight.swift; sourceTree = "<group>"; };
 		68C949521D01127400199864 /* BaseHealthObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseHealthObject.swift; sourceTree = "<group>"; };
+		8F439ED0CD1A953CEDCDF704 /* Pods-Starter App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Starter App.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Starter App/Pods-Starter App.debug.xcconfig"; sourceTree = "<group>"; };
 		8F6F73961CF3F6550099920A /* Starter App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Starter App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F6F73991CF3F6550099920A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8F6F739B1CF3F6550099920A /* ViewDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDataViewController.swift; sourceTree = "<group>"; };
@@ -76,6 +55,7 @@
 		8F6F73A51CF3F6550099920A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8F6F73A71CF3F6550099920A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8F8215481CF3FD7A001198A2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
+		DCC8F0FD318B492D1D82F925 /* Pods-Starter App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Starter App.release.xcconfig"; path = "Pods/Target Support Files/Pods-Starter App/Pods-Starter App.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,13 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6808CB271CF4EEDD00995BEA /* Realm.framework in Frameworks */,
-				682129B91CF8762F004F3C0B /* HomeKit.framework in Frameworks */,
-				6808CB291CF4EEDD00995BEA /* RealmSwift.framework in Frameworks */,
-				8F8215491CF3FD7A001198A2 /* Alamofire.framework in Frameworks */,
-				682129B71CF875F7004F3C0B /* HealthKit.framework in Frameworks */,
-				6808CB231CF4EEB700995BEA /* CareKit.framework in Frameworks */,
-				6808CB241CF4EEB700995BEA /* ResearchKit.framework in Frameworks */,
+				C690580B771D38554FED2E4C /* Pods_Starter_App.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -208,6 +182,7 @@
 				8F6F73981CF3F6550099920A /* Starter App */,
 				8F82154A1CF3FD80001198A2 /* Frameworks */,
 				8F6F73971CF3F6550099920A /* Products */,
+				B6B70CD70A2F0ED1FF3FAC69 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -245,8 +220,18 @@
 				6808CB211CF4EEB700995BEA /* CareKit.framework */,
 				6808CB221CF4EEB700995BEA /* ResearchKit.framework */,
 				8F8215481CF3FD7A001198A2 /* Alamofire.framework */,
+				5511AC7BFFED1BFF6F4B833B /* Pods_Starter_App.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B6B70CD70A2F0ED1FF3FAC69 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				8F439ED0CD1A953CEDCDF704 /* Pods-Starter App.debug.xcconfig */,
+				DCC8F0FD318B492D1D82F925 /* Pods-Starter App.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -256,11 +241,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8F6F73AA1CF3F6550099920A /* Build configuration list for PBXNativeTarget "Starter App" */;
 			buildPhases = (
+				352FE93C96596D906E5E9F1A /* [CP] Check Pods Manifest.lock */,
 				8F6F73921CF3F6550099920A /* Sources */,
 				8F6F73931CF3F6550099920A /* Frameworks */,
 				8F6F73941CF3F6550099920A /* Resources */,
-				8F82154B1CF3FD97001198A2 /* Carthage Script */,
-				6808CB2B1CF4EEDD00995BEA /* Embed Frameworks */,
+				61F5CF8B59B6DD1F04FC2445 /* [CP] Embed Pods Frameworks */,
+				3C19C44EC82C2F77AC60BD5D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -328,25 +314,50 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		8F82154B1CF3FD97001198A2 /* Carthage Script */ = {
+		352FE93C96596D906E5E9F1A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/CareKit.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Realm.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/RealmSwift.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/ResearchKit.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/CareKit.framework",
 			);
-			name = "Carthage Script";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		3C19C44EC82C2F77AC60BD5D /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Starter App/Pods-Starter App-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		61F5CF8B59B6DD1F04FC2445 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Starter App/Pods-Starter App-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -481,6 +492,7 @@
 		};
 		8F6F73AB1CF3F6550099920A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8F439ED0CD1A953CEDCDF704 /* Pods-Starter App.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Starter App/Starter App.entitlements";
@@ -498,6 +510,7 @@
 		};
 		8F6F73AC1CF3F6550099920A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DCC8F0FD318B492D1D82F925 /* Pods-Starter App.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Starter App/Starter App.entitlements";

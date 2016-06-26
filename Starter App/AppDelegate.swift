@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print(realm.configuration.fileURL?.absoluteString)
         #endif
         
-        ServerSync.fetchAllData_FromServer()
+        ServerSync.sharedInstance
         HealthKitSync.sharedInstance
         
         return true

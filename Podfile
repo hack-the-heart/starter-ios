@@ -5,8 +5,9 @@ inhibit_all_warnings!
 use_frameworks!
 
 def installablePods
-    pod "CDTDatastore"
     pod "RealmSwift"
+    pod "Alamofire"
+    pod "ObjectiveCloudant"
 end
 
 target 'Starter App' do

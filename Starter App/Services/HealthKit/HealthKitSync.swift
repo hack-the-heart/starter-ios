@@ -93,30 +93,40 @@ class HealthKitSync: NSObject {
     }
     
     // MARK: - CLASS FUNCTIONS
-    // MARK: Save Realm Data to HK
-    class func saveWeightData_ToHealthKit(withRealmID realmID: String) throws {
-        let realm = try! Realm()
-        guard let weightObj = realm.objects(Weight).filter("id == %@", realmID).first,
-            let weightValue = weightObj.value.value,
-            let startDate = weightObj.date else { return }
+    // MARK: Save Realm Data to HK    
+    class func saveRealmData_ToHealthKit(withRealmID realmID: String) throws {
+        // ideally you would like to store data back into HealthKit,
+        // but for the purposes of this hackathon and the starter app, 
+        // we are only reading data from health kit, and saving it to 
+        // our local realm db and the server.
         
-        let quantity = HKQuantity(unit: HKUnit.poundUnit(), doubleValue: weightValue)
+        // if we get data from the server, we only save it to local db.
+        // this method is stubbed out for future implementation
         
-        let bodyMass = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!
         
-        let newSample = HKQuantitySample(type: bodyMass, quantity: quantity, startDate: startDate, endDate: startDate)
         
-        HealthKitManager.sharedInstance.hkHealthStore.saveObject(newSample) { (success, error) in
-            if success == true {
-                do {
-                    try ObjectIDMap.store(realmID: realmID, healthkitUUID: newSample.UUID.UUIDString, serverUUID: nil)
-                } catch {
-                    //TODO: do something with this error
-                }
-            } else {
-                //TODO: do something with this error
-            }
-        }
+//        let realm = try! Realm()
+//        guard let weightObj = realm.objects(Weight).filter("id == %@", realmID).first,
+//            let weightValue = weightObj.value.value,
+//            let startDate = weightObj.date else { return }
+//        
+//        let quantity = HKQuantity(unit: HKUnit.poundUnit(), doubleValue: weightValue)
+//        
+//        let bodyMass = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!
+//        
+//        let newSample = HKQuantitySample(type: bodyMass, quantity: quantity, startDate: startDate, endDate: startDate)
+//        
+//        HealthKitManager.sharedInstance.hkHealthStore.saveObject(newSample) { (success, error) in
+//            if success == true {
+//                do {
+//                    try ObjectIDMap.store(realmID: realmID, healthkitUUID: newSample.UUID.UUIDString, serverUUID: nil)
+//                } catch {
+//                    //TODO: do something with this error
+//                }
+//            } else {
+//                //TODO: do something with this error
+//            }
+//        }
     }
     
     // MARK: Get All Data from HK
@@ -151,7 +161,7 @@ class HealthKitSync: NSObject {
         
         do {
             
-            if let _ = ObjectIDMap.findMapObject(realmID: nil, healthkitUUID: healthkitUUID, serverUUID: nil) {
+            if let mapObject = ObjectIDMap.findMapObject(realmID: nil, healthkitUUID: healthkitUUID, serverUUID: nil) where mapObject.realmID != nil {
                 //dont do anything if object already exists
             } else {
                 //save to realm
@@ -159,7 +169,7 @@ class HealthKitSync: NSObject {
                 
                 try ObjectIDMap.store(realmID: realmObj.id, healthkitUUID: healthkitUUID, serverUUID: nil)
                 
-                ServerSync.uploadData_ToServer(withRealmID: realmObj.id)
+                ServerSync.sharedInstance.uploadData_ToServer(withRealmID: realmObj.id, healthObjectType: String(Weight))
             }
         } catch {
             print("error saving weight data to realm")

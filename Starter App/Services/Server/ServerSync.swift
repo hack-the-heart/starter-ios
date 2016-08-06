@@ -84,16 +84,20 @@ class ServerSync: NSObject {
             if let mapObject = ObjectIDMap.findMapObject(realmID: nil, healthkitUUID: nil, serverUUID: serverUUID) where mapObject.realmID != nil {
                 //dont do anything if object already exists
             } else {
-                switch healthObjType {
-                case String(Weight):
+                switch healthObjType.lowercaseString {
+                case HealthObjectType.Weight.rawValue:
+                    
                     let weightValue = data["value"] as! Double
                     let date = NSDate(timeIntervalSince1970: dateInSeconds)
                     
                     do {
-                        guard let realmObj = try Weight.saveToRealm(weightValue: weightValue, date: date, sourceName: sourceName) else { return }
-                        try ObjectIDMap.store(realmID: realmObj.id, healthkitUUID: nil, serverUUID: serverUUID)
+                        let healthObjType = HealthObjectType.Weight
+                        let weightHealthObj = try HealthObject.saveToRealm(healthObjType, date: date, source: sourceName)
+                        let _ = try HealthData.saveToRealm("value", value: String(weightValue), healthObj: weightHealthObj)
                         
-                        try HealthKitSync.saveRealmData_ToHealthKit(withRealmID: realmObj.id)
+                        try ObjectIDMap.store(realmID: weightHealthObj.id, healthkitUUID: nil, serverUUID: serverUUID)
+                        
+                        try HealthKitSync.saveRealmData_ToHealthKit(withRealmID: weightHealthObj.id)
                     } catch {
                         // do something with error
                     }
@@ -107,7 +111,7 @@ class ServerSync: NSObject {
         sensorDataDB.addOperation(findOperation)
     }
     
-    func uploadData_ToServer(withRealmID realmID: String, healthObjectType: String) {
+    func uploadData_ToServer(withRealmID realmID: String) {
         guard let sensorDataDB = sensorDataDB else { return }
         
         let realm = try! Realm()
@@ -115,19 +119,19 @@ class ServerSync: NSObject {
         var documentBody: [String:NSObject] = [:]
         documentBody["insertionDateInSeconds"] = NSDate().timeIntervalSince1970
         
-        switch healthObjectType {
-        case String(Weight):
-            guard let weightObj = realm.objects(Weight).filter("id == %@", realmID).first else { break }
-            
-            documentBody["healthObjType"] = String(Weight)
-            documentBody["dateInSeconds"] = weightObj.date!.timeIntervalSince1970
-            documentBody["data"] = ["value" : weightObj.value.value!]
-            documentBody["sourceName"] = weightObj.source!
-            
-            
-        default:
-            break
+        //TODO: throw an exception here
+        guard let healthObj = realm.objects(HealthObject).filter("id == %@", realmID).first else { return }
+        let healthDataObjArr = healthObj.dataObjects
+        
+        var dataDictionary: [String:String] = [:]
+        for healthDataObj in healthDataObjArr {
+            dataDictionary[healthDataObj.label!] = healthDataObj.value!
         }
+        
+        documentBody["healthObjType"] = healthObj.type
+        documentBody["dateInSeconds"] = healthObj.date!.timeIntervalSince1970
+        documentBody["data"] = dataDictionary
+        documentBody["sourceName"] = healthObj.source!
         
         // throw an error here
         guard documentBody.count != 0 else { return }

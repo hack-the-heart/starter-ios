@@ -14,9 +14,9 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
     
     @IBOutlet weak var tableView: UITableView!
     
-    var selectedHealthObject: String?
+    var selectedHealthObject: HealthObjectType?
     
-    let healthObjects = [ String(Weight) ]
+    let healthObjects: [HealthObjectType] = [ .Weight ]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,7 +47,8 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
             return tableView.dequeueReusableCellWithIdentifier("DataCell", forIndexPath: indexPath)
         }
         
-        cell.title.text = healthObjects[indexPath.item]
+        cell.title.text = healthObjects[indexPath.item].rawValue
+        cell.healthObjType = healthObjects[indexPath.item]
         
         return cell
     }
@@ -55,7 +56,7 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         guard let cell = tableView.cellForRowAtIndexPath(indexPath) as? HealthDataTableViewCell else { return }
         
-        selectedHealthObject = cell.title.text
+        selectedHealthObject = cell.healthObjType
         self.performSegueWithIdentifier("DisplayHealthObjectData", sender: self)
     }
     

@@ -15,13 +15,14 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
     
     @IBOutlet weak var tableView: UITableView!
     
-    var healthObjectType: String?
+    var healthObjectType: HealthObjectType?
+    var realmHealthObjects: Results<HealthObject>?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
-        self.tableView.reloadData()
+       
+        reloadData()
     }
     
     override func didReceiveMemoryWarning() {
@@ -29,21 +30,28 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
         // Dispose of any resources that can be recreated.
     }
     
+    //MARK: - Reload Data
+    func reloadData() {
+        guard let healthObjTypeStr = healthObjectType?.rawValue else { return }
+        
+        let realm = try! Realm()
+        
+        realmHealthObjects = realm.objects(HealthObject).filter("type == %@", healthObjTypeStr)
+        self.tableView.reloadData()
+    }
+    
+    //MARK: - TableView Delegates
+    
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let realm = try! Realm()
-        
-        switch healthObjectType! {
-            
-        case String(Weight):
-            return realm.objects(Weight).count
-            
-        default:
-            return 0
+        if let count = realmHealthObjects?.count {
+            return count
         }
+        
+        return 0
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -51,22 +59,25 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
             return tableView.dequeueReusableCellWithIdentifier("DataCell", forIndexPath: indexPath)
         }
         
-        let realm = try! Realm()
-        var healthObject: BaseHealthObject?
-        
-        switch healthObjectType! {
-            
-        case String(Weight):
-            let allWeightObjs = realm.objects(Weight).sorted("date", ascending: false)
-            let weightObj = allWeightObjs[indexPath.item]
-            healthObject = weightObj
-            
-            cell.title.text = "\(weightObj.value.value!)"
-        default:
-            break
+        guard let realmHealthObjects = realmHealthObjects else {
+            cell.title.text = "Error"
+            return cell
         }
         
-        if let date = healthObject?.date {
+        let healthObj = realmHealthObjects[indexPath.item]
+        let healthDataObjArr = healthObj.dataObjects
+        
+        //set data values string
+        let dataValuesArr = healthDataObjArr.map { (dataObj) -> String in
+            return dataObj.label! + ": " + dataObj.value!
+        }
+        
+        let dataValuesStr = dataValuesArr.joinWithSeparator(",")
+        
+        cell.title.text = dataValuesStr
+        
+        //set date
+        if let date = healthObj.date {
             let formatter = NSDateFormatter()
             formatter.dateStyle = NSDateFormatterStyle.ShortStyle
             formatter.timeStyle = .ShortStyle

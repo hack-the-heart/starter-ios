@@ -165,11 +165,13 @@ class HealthKitSync: NSObject {
                 //dont do anything if object already exists
             } else {
                 //save to realm
-                guard let realmObj = try Weight.saveToRealm(weightValue: weightValue, date: date, sourceName: sourceName) else { return }
+                let healthObjType = HealthObjectType.Weight
+                let weightHealthObj = try HealthObject.saveToRealm(healthObjType, date: date, source: sourceName)
+                let _ = try HealthData.saveToRealm("value", value: String(weightValue), healthObj: weightHealthObj)
                 
-                try ObjectIDMap.store(realmID: realmObj.id, healthkitUUID: healthkitUUID, serverUUID: nil)
+                try ObjectIDMap.store(realmID: weightHealthObj.id, healthkitUUID: healthkitUUID, serverUUID: nil)
                 
-                ServerSync.sharedInstance.uploadData_ToServer(withRealmID: realmObj.id, healthObjectType: String(Weight))
+                ServerSync.sharedInstance.uploadData_ToServer(withRealmID: weightHealthObj.id)
             }
         } catch {
             print("error saving weight data to realm")

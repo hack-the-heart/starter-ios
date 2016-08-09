@@ -11,7 +11,7 @@ import UIKit
 
 class HealthDataTableViewCell: UITableViewCell {
 
-    var healthObjType: HealthObjectType?
+    var healthObjType: String?
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var subtitle: UILabel!
     

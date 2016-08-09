@@ -165,7 +165,7 @@ class HealthKitSync: NSObject {
                 //dont do anything if object already exists
             } else {
                 //save to realm
-                let healthObjType = HealthObjectType.Weight
+                let healthObjType = HealthObjectType.Weight.rawValue
                 let weightHealthObj = try HealthObject.saveToRealm(healthObjType, date: date, source: sourceName)
                 let _ = try HealthData.saveToRealm("value", value: String(weightValue), healthObj: weightHealthObj)
                 

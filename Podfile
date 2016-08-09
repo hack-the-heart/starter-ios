@@ -8,6 +8,7 @@ def installablePods
     pod "RealmSwift"
     pod "Alamofire"
     pod "ObjectiveCloudant"
+		pod "CHCSVParser"
 end
 
 target 'Starter App' do

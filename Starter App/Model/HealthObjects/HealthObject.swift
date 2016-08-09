@@ -23,11 +23,11 @@ class HealthObject: Object {
     
     let dataObjects = LinkingObjects(fromType: HealthData.self, property: "healthObject")
     
-    class func saveToRealm(type: HealthObjectType, date: NSDate, source: String) throws -> HealthObject  {
+    class func saveToRealm(typeStr: String, date: NSDate, source: String) throws -> HealthObject  {
         let realm = try! Realm()
         
         let healthObj = HealthObject()
-        healthObj.type = type.rawValue
+        healthObj.type = typeStr
         healthObj.date = date
         healthObj.source = source
         

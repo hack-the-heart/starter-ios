@@ -14,13 +14,15 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
     
     @IBOutlet weak var tableView: UITableView!
     
-    var selectedHealthObject: HealthObjectType?
+    var selectedHealthObject: String?
     
-    let healthObjects: [HealthObjectType] = [ .Weight ]
+    var healthObjects: [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        loadData()
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -38,6 +40,17 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
     
+    //MARK: - Load Data
+    func loadData() {
+        do {
+            healthObjects = try Array(Set(Realm().objects(HealthObject).valueForKey("type") as! [String]))
+        } catch {
+            print(error)
+        }
+    }
+    
+    //MARK: - TableView Delegates
+    
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return healthObjects.count
     }
@@ -47,7 +60,7 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
             return tableView.dequeueReusableCellWithIdentifier("DataCell", forIndexPath: indexPath)
         }
         
-        cell.title.text = healthObjects[indexPath.item].rawValue
+        cell.title.text = healthObjects[indexPath.item]
         cell.healthObjType = healthObjects[indexPath.item]
         
         return cell

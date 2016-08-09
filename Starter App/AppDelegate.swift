@@ -26,6 +26,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ServerSync.sharedInstance
         HealthKitSync.sharedInstance
         
+        CSVDatasetManager.downloadAndStoreData()
+        
         return true
     }
 

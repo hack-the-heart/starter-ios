@@ -15,7 +15,7 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
     
     @IBOutlet weak var tableView: UITableView!
     
-    var healthObjectType: HealthObjectType?
+    var healthObjectType: String?
     var realmHealthObjects: Results<HealthObject>?
     
     override func viewDidLoad() {
@@ -32,7 +32,7 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
     
     //MARK: - Reload Data
     func reloadData() {
-        guard let healthObjTypeStr = healthObjectType?.rawValue else { return }
+        guard let healthObjTypeStr = healthObjectType else { return }
         
         let realm = try! Realm()
         

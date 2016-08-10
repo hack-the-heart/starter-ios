@@ -18,16 +18,43 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
     var healthObjectType: String?
     var realmHealthObjects: Results<HealthObject>?
     
+    var realmNotification: NotificationToken?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-       
-        reloadData()
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        guard let healthObjTypeStr = healthObjectType else { return }
+        
+        let realm = try! Realm()
+        realmNotification = realm.objects(HealthObject).filter("type == %@", healthObjTypeStr).addNotificationBlock({ (notification) in
+            self.reloadData()
+        })
+        
+        reloadData()
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        realmNotification?.stop()
+        realmNotification = nil
+    }
+    
+    deinit {
+        if realmNotification != nil {
+            realmNotification?.stop()
+            realmNotification = nil
+        }
     }
     
     //MARK: - Reload Data

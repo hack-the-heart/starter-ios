@@ -18,16 +18,41 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
     
     var healthObjects: [String] = []
     
+    var realmNotification: NotificationToken?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        loadData()
-        
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        let realm = try! Realm()
+        realmNotification = realm.objects(HealthObject).addNotificationBlock({ (notification) in
+            self.reloadData()
+        })
+        
+        reloadData()
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        realmNotification?.stop()
+        realmNotification = nil
+    }
+    
+    deinit {
+        if realmNotification != nil {
+            realmNotification?.stop()
+            realmNotification = nil
+        }
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -41,12 +66,14 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     //MARK: - Load Data
-    func loadData() {
+    func reloadData() {
         do {
             healthObjects = try Array(Set(Realm().objects(HealthObject).valueForKey("type") as! [String]))
         } catch {
             print(error)
         }
+        
+        self.tableView.reloadData()
     }
     
     //MARK: - TableView Delegates

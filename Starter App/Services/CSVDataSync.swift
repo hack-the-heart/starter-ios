@@ -7,23 +7,41 @@
 //
 
 import Foundation
+import CHCSVParser
+import RealmSwift
 import Alamofire
 
-class CSVDatasetManager: NSObject {
+class CSVDataSync: NSObject {
     
-    class func downloadAndStoreData() {
+    static let csvDataURLs: [String] = [
+        "https://www.dropbox.com/s/h3v1o1quzn5p370/dataset.csv?dl=1"
+    ]
+    
+    class func retrieveAllCSVData() {
+        let realm = try! Realm()
         
+        for url in csvDataURLs {
+            let records = realm.objects(DataDownloadRecord).filter("url == %@", url)
+            if records.count == 0 {
+                CSVDataSync.downloadAndStoreData(url)
+            }
+        }
+    }
+    
+    private class func downloadAndStoreData(url: String) {
         //sample csv file for now
-//        CSVDatasetManager.retrieveData("") { (success, data, error) -> (Void) in
-//            guard success else {
-//                print(error)
-//                return
-//            }
-//            
-//            print(data)
-//            
-//            //TODO: store data objects in realm
-//        }
+        CSVDataSync.retrieveData(url) { (success, data, error) -> (Void) in
+            guard success else {
+                print("error retrieving data for url: \(url). error: \(error)")
+                return
+            }
+            
+            do {
+                try DataDownloadRecord.saveToRealm(url, date: NSDate())
+            } catch {
+                print(error)
+            }
+        }
     }
     
     /**
@@ -76,10 +94,10 @@ class CSVDatasetManager: NSObject {
     }
     
     private class func parseCSVContents(localPath: NSURL, csvData: String)  {
-        var dataArray = NSArray(contentsOfCSVURL: localPath)
+        let dataArrayWR = NSArray(contentsOfCSVURL: localPath)
         
         //first header/column should always be date or date-time
-        guard let headers = dataArray[0] as? [String] else { return }
+        guard var dataArray = dataArrayWR, let headers = dataArray[0] as? [String] else { return }
         
         // drop the first row in the array, which is just headers
         dataArray = Array(dataArray.dropFirst())
@@ -110,6 +128,8 @@ class CSVDatasetManager: NSObject {
                 do {
                     let healthObj = try HealthObject.saveToRealm(headers[index], date: dateObj, source: "csv")
                     try HealthData.saveToRealm("value", value: itemInRow, healthObj: healthObj)
+                    
+                    try ObjectIDMap.store(realmID: healthObj.id, healthkitUUID: nil, serverUUID: nil)
                 } catch {
                     print(error)
                 }

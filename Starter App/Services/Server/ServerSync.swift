@@ -87,13 +87,17 @@ class ServerSync: NSObject {
                 switch healthObjType.lowercaseString {
                 case HealthObjectType.Weight.rawValue:
                     
-                    let weightValue = Double(String(data["value"]))
+                    var weightValueStr = "error"
+                    if let weightValue = data["value"] {
+                        weightValueStr = String(weightValue)
+                    }
+                    
                     let date = NSDate(timeIntervalSince1970: dateInSeconds)
                     
                     do {
                         let healthObjType = HealthObjectType.Weight.rawValue
                         let weightHealthObj = try HealthObject.saveToRealm(healthObjType, date: date, source: sourceName)
-                        let _ = try HealthData.saveToRealm("value", value: String(weightValue), healthObj: weightHealthObj)
+                        let _ = try HealthData.saveToRealm("value", value: weightValueStr, healthObj: weightHealthObj)
                         
                         try ObjectIDMap.store(realmID: weightHealthObj.id, healthkitUUID: nil, serverUUID: serverUUID)
                         

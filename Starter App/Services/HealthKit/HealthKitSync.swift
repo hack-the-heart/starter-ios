@@ -12,6 +12,8 @@ import HealthKit
 import RealmSwift
 
 // MARK: HealthKit
+/// Read/Write/Background Delivery Objects
+
 let readHKObjects = [
     HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!
 ]
@@ -24,9 +26,13 @@ let backgroundDeliveryHKSamples = [
     HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!
 ]
 
+/// HealthKitSync pulls in data from HealthKit and stores it locally in realm
 class HealthKitSync: NSObject {
     static let sharedInstance = HealthKitSync()
     
+    /**
+     Initializes the HealthKitManager.
+     */
     override init() {
         super.init()
         
@@ -68,6 +74,11 @@ class HealthKitSync: NSObject {
         }
     }
     
+    /**
+     Handle background update notification and store data to realm and server.
+     
+     - parameter userInfo: nsnotification user info object
+     */
     func handleHKBackgroundUpdate(userInfo: [NSObject: AnyObject]) {
         guard let typeIdentifier = userInfo[HealthKitManager.NotificationUserInfoKey.HKObjectTypeId.rawValue] as? String,
             hkObjectsDictionary = userInfo[HealthKitManager.NotificationUserInfoKey.HKObjects.rawValue] as? [[String: AnyObject]]
@@ -94,17 +105,22 @@ class HealthKitSync: NSObject {
     
     // MARK: - CLASS FUNCTIONS
     // MARK: Save Realm Data to HK    
+    /**
+     Saves realm data to healthkit.
+     
+     ideally you would like to store data back into HealthKit,
+     but for the purposes of this hackathon and the starter app,
+     we are only reading data from health kit, and saving it to
+     our local realm db and the server.
+     
+     if we get data from the server, we only save it to local db.
+     this method is stubbed out for future implementation
+     
+     - parameter realmID: id of realm object that needs to be stored in health kit
+     
+     - throws: some error
+     */
     class func saveRealmData_ToHealthKit(withRealmID realmID: String) throws {
-        // ideally you would like to store data back into HealthKit,
-        // but for the purposes of this hackathon and the starter app, 
-        // we are only reading data from health kit, and saving it to 
-        // our local realm db and the server.
-        
-        // if we get data from the server, we only save it to local db.
-        // this method is stubbed out for future implementation
-        
-        
-        
 //        let realm = try! Realm()
 //        guard let weightObj = realm.objects(Weight).filter("id == %@", realmID).first,
 //            let weightValue = weightObj.value.value,
@@ -130,6 +146,11 @@ class HealthKitSync: NSObject {
     }
     
     // MARK: Get All Data from HK
+    /**
+     Save all healthkit data to realm and server. This function is called after a successful authorization to sync all data from HealthKit and store it in Realm.
+     
+     Currently only weight data is synced but to sync more data add additional functions here.
+     */
     class func saveAllHKData_ToRealmAndServer() {
         saveAllHKWeightData_ToRealmAndServer()
     }
@@ -151,6 +172,11 @@ class HealthKitSync: NSObject {
     }
     
     // MARK: Save HK Data to Realm
+    /**
+     Save a specific health kit weight object to realm
+     
+     - parameter hkObject: health kit object represented as a dictionary
+     */
     private class func saveHKWeightData_ToRealmAndServer(hkObject: [String:AnyObject]) {
         let sourceName = hkObject[HKObjectKey.SourceName.rawValue] as! String
         

@@ -9,6 +9,10 @@
 import Foundation
 import RealmSwift
 
+/// An object that represents a single instance of data download. 
+/// When a csv file is downloaded, a record of that gets stored in realm
+/// to keep track of what files have been downloaded.
+
 class DataDownloadRecord: Object {
     
     dynamic var url: String?

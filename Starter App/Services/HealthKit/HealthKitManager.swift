@@ -16,6 +16,7 @@ enum HKObjectKey: String {
     case WeightValue = "weightValue"
 }
 
+/// Manages HealthKit authorization, querying, storing, etc.
 class HealthKitManager {
     /// Shared Instance - This class is a singleton. You must use this instance to interact with HealthKitManager.
     static let sharedInstance = HealthKitManager()

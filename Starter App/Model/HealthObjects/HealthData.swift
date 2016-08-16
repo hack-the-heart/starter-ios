@@ -9,6 +9,7 @@
 import Foundation
 import RealmSwift
 
+/// An object that represents a single piece of health data. Each HealthData obj is connected to a HealthObj.
 class HealthData: Object {
     
     dynamic var healthObject: HealthObject?

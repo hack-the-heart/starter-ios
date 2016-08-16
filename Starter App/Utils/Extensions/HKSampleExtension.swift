@@ -10,6 +10,11 @@ import Foundation
 import HealthKit
 
 extension HKSample {
+    /**
+     Converts an HKSample to a dictionary. Currently this only handles Weight data (HKQuantityTypeIdentifierBodyMass).
+     
+     - returns: <#return value description#>
+     */
     func toDictionary() -> [String: AnyObject] {
         let date = self.startDate
         let healthkit_uuid = self.UUID.UUIDString
@@ -36,6 +41,9 @@ extension HKSample {
         return resultDict
     }
     
+    /**
+     Converts Weight specific HKSamples to a dictionary.
+     */
     private func weightValuesToDictionary() -> [String: AnyObject] {
         guard let quantitySample = self as? HKQuantitySample else { return [:] }
         

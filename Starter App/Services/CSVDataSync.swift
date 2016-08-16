@@ -11,12 +11,20 @@ import CHCSVParser
 import RealmSwift
 import Alamofire
 
+
 class CSVDataSync: NSObject {
     
+    /**
+     List of datasets (in csv format) that must be downloaded.
+     */
     static let csvDataURLs: [String] = [
         "https://www.dropbox.com/s/h3v1o1quzn5p370/dataset.csv?dl=1"
     ]
     
+    /**
+     This will retrieve csv data from the list of URLs above. 
+     If the dataset has already been downloaded, it will not download it again. This is tracked through storing records of data downloads in Realm.
+     */
     class func retrieveAllCSVData() {
         let realm = try! Realm()
         
@@ -28,6 +36,11 @@ class CSVDataSync: NSObject {
         }
     }
     
+    /**
+     A helper function to download and store data from a url.
+     
+     - parameter url: url where the dataset must be downloaded from
+     */
     private class func downloadAndStoreData(url: String) {
         //sample csv file for now
         CSVDataSync.retrieveData(url) { (success, data, error) -> (Void) in
@@ -45,9 +58,9 @@ class CSVDataSync: NSObject {
     }
     
     /**
-     <#Description#>
+     A function to retrieve a dataset (in CSV format) from some URL, store it locally, and process it.
      
-     - parameter fileWebURL:   <#fileURL description#>
+     - parameter fileWebURL:   url where the dataset must be downloaded from
      - parameter completed: (success, array of records (Stored as dictionaries), error) -> (Void)
      */
     private class func retrieveData(fileWebURL: String, completed: (Bool, [[String: String]]?, NSError?) -> (Void)) {
@@ -78,22 +91,23 @@ class CSVDataSync: NSObject {
                 
                 print("Downloaded file successfully. Parsing file now.")
                 
-                do {
-                    
-                    let fileContents = try String(contentsOfURL: localPath!)
-                    //print(fileContents)
-                    parseCSVContents(localPath!, csvData: fileContents)
-                    completed(true, nil, nil)
-                } catch {
-                    print(error)
-                    completed(false, nil, nil)
-                    return
-                }
                 
+                //                    let fileContents = try String(contentsOfURL: localPath!)
+                //print(fileContents)
+                parseCSVContents(localPath!)
+                completed(true, nil, nil)
         }
     }
     
-    private class func parseCSVContents(localPath: NSURL, csvData: String)  {
+    /**
+     Function to parse the contents of the csv file. The csv file must be in a specific format:
+        ROW HEADERS:   date (or date-time)      healthObjTypeName1      healthObjTypeName2      and so on...
+     
+     This function will automatically store health objects and health data in Realm.
+     
+     - parameter localPath: the local path of where the csv file is stored
+     */
+    private class func parseCSVContents(localPath: NSURL)  {
         let dataArrayWR = NSArray(contentsOfCSVURL: localPath)
         
         //first header/column should always be date or date-time

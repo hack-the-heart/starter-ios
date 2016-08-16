@@ -17,15 +17,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Application Lifecycle
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        //detect if we are running on a simulator to print realm path
+        
+        //detect if we are running on a simulator to print realm path (for debugging purposes)
         #if (arch(i386) || arch(x86_64)) && (os(iOS) || os(watchOS) || os(tvOS))
             let realm = try! Realm()
             print(realm.configuration.fileURL?.absoluteString)
         #endif
         
+        //initialize server sync and healthkit sync
         ServerSync.sharedInstance
         HealthKitSync.sharedInstance
         
+        //retrieve csv data that has not been retrieved already
         CSVDataSync.retrieveAllCSVData()
         
         return true

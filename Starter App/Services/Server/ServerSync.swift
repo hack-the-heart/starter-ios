@@ -10,13 +10,22 @@ import Foundation
 import ObjectiveCloudant
 import RealmSwift
 
+/// ServerSync.swift pulls down data from the server and stores it locally.
 class ServerSync: NSObject {
     static let sharedInstance = ServerSync()
     
+    /// database credentials
     let databaseName = "sensor_data"
+    let databaseUrl = "https://859c612f-1dc8-48fe-98ff-b9cdc6a340e6-bluemix.cloudant.com"
+    let dbUsername = "859c612f-1dc8-48fe-98ff-b9cdc6a340e6-bluemix"
+    let dbPassword = "b65e1a73c02ac1fa23fe84255163ad176903ea1b63aac449882186e6bda16829"
+    
+    
     var cloudantClient: CDTCouchDBClient?
     var sensorDataDB: CDTDatabase?
     
+    /// lastSyncTimestamp is used to determine when the app last synced. 
+    /// This is used to fetch new records from the last synced timestamp.
     var lastSyncTimestamp: NSDate {
         get {
             let defaults = NSUserDefaults.standardUserDefaults()
@@ -35,14 +44,17 @@ class ServerSync: NSObject {
     override init() {
         super.init()
         
-        if let url = NSURL(string: "https://859c612f-1dc8-48fe-98ff-b9cdc6a340e6-bluemix.cloudant.com") {
-            cloudantClient = CDTCouchDBClient(forURL: url, username: "859c612f-1dc8-48fe-98ff-b9cdc6a340e6-bluemix", password: "b65e1a73c02ac1fa23fe84255163ad176903ea1b63aac449882186e6bda16829")
+        if let url = NSURL(string: databaseUrl) {
+            cloudantClient = CDTCouchDBClient(forURL: url, username: dbUsername, password: dbPassword)
             sensorDataDB = cloudantClient?[databaseName]
         }
         
         self.fetchAllData_SinceLastSync_FromServer()
     }
     
+    /**
+     Fetches all data since last sync timestamp and store it to realm.
+     */
     func fetchAllData_SinceLastSync_FromServer() {
         guard let sensorDataDB = sensorDataDB else { return }
         
@@ -101,7 +113,8 @@ class ServerSync: NSObject {
                         
                         try ObjectIDMap.store(realmID: weightHealthObj.id, healthkitUUID: nil, serverUUID: serverUUID)
                         
-                        try HealthKitSync.saveRealmData_ToHealthKit(withRealmID: weightHealthObj.id)
+                        // if you wanted to store this data to healthkit, then uncomment this line
+                        //try HealthKitSync.saveRealmData_ToHealthKit(withRealmID: weightHealthObj.id)
                     } catch {
                         // do something with error
                     }
@@ -115,6 +128,11 @@ class ServerSync: NSObject {
         sensorDataDB.addOperation(findOperation)
     }
     
+    /**
+     Upload local realm data to server
+     
+     - parameter realmID: pull in the HealthObject and HealthData obj using the realmId and upload that data
+     */
     func uploadData_ToServer(withRealmID realmID: String) {
         guard let sensorDataDB = sensorDataDB else { return }
         

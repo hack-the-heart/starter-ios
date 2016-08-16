@@ -14,6 +14,7 @@ enum HealthObjectType: String {
     case Weight = "weight"
 }
 
+/// A HealthObject that contains generic information such as type, source, date, and etc. Health specific data is not stored here. See HealthData.
 class HealthObject: Object {
     
     dynamic var id: String = NSUUID().UUIDString
@@ -21,6 +22,9 @@ class HealthObject: Object {
     dynamic var date: NSDate?
     dynamic var type: String?
     
+    /**
+     Realm specific property to pull in all HealthData objects that have self as the healthObject.
+     */
     let dataObjects = LinkingObjects(fromType: HealthData.self, property: "healthObject")
     
     class func saveToRealm(typeStr: String, date: NSDate, source: String) throws -> HealthObject  {

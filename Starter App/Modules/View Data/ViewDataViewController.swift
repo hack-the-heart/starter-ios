@@ -14,11 +14,16 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
     
     @IBOutlet weak var tableView: UITableView!
     
+    //property for storing a selected cell in a tableview. this is passed to ViewSpecificDataViewController
     var selectedHealthObject: String?
     
+    //container to store HealthObjects. Used for UITableView
     var healthObjects: [String] = []
     
+    /// realm notification to monitor any changes/additions to the realm obj: "HealthObject"
     var realmNotification: NotificationToken?
+    
+    //MARK: - Application Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,12 +71,10 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     //MARK: - Load Data
+    
     func reloadData() {
-        do {
-            healthObjects = try Array(Set(Realm().objects(HealthObject).valueForKey("type") as! [String]))
-        } catch {
-            print(error)
-        }
+        let realm = try! Realm()
+        healthObjects = Array(Set(realm.objects(HealthObject).valueForKey("type") as! [String]))
         
         self.tableView.reloadData()
     }

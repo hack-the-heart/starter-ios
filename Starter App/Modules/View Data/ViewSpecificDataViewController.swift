@@ -16,9 +16,12 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
     @IBOutlet weak var tableView: UITableView!
     
     var healthObjectType: String?
+    
     var realmHealthObjects: Results<HealthObject>?
     
     var realmNotification: NotificationToken?
+    
+    //MARK: - Application Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,6 +61,7 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
     }
     
     //MARK: - Reload Data
+    
     func reloadData() {
         guard let healthObjTypeStr = healthObjectType else { return }
         
@@ -96,6 +100,7 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
         
         //set data values string
         let dataValuesArr = healthDataObjArr.map { (dataObj) -> String in
+            //assuming label and value will never be nil
             return dataObj.label! + ": " + dataObj.value!
         }
         

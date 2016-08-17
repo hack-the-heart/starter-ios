@@ -27,9 +27,14 @@ extension HKSample {
         
         var sampleSpecificDict: [String: AnyObject] = [:]
         
+        //TODO-ADD-NEW-DATA-TYPE
+        //ADD in support to parse specific values inside a HealthKit object
+        
         switch self.sampleType.identifier {
         case HKQuantityTypeIdentifierBodyMass:
             sampleSpecificDict = weightValuesToDictionary()
+        case HKQuantityTypeIdentifierStepCount:
+            sampleSpecificDict = stepValuesToDictionary()
         default:
             break
         }
@@ -49,5 +54,19 @@ extension HKSample {
         
         let weightValue = quantitySample.quantity.doubleValueForUnit(HKUnit.poundUnit())
         return [HKObjectKey.WeightValue.rawValue: weightValue]
+    }
+    
+    
+    //TODO-ADD-NEW-DATA-TYPE
+    //ADD in a function to handle parsing specific values inside a HealthKit object
+    
+    /**
+     Converts Step specific HKSamples to a dictionary.
+     */
+    private func stepValuesToDictionary() -> [String: AnyObject] {
+        guard let quantitySample = self as? HKQuantitySample else { return [:] }
+        
+        let stepValue = quantitySample.quantity.doubleValueForUnit(HKUnit.countUnit())
+        return [HKObjectKey.StepValue.rawValue: stepValue]
     }
 }

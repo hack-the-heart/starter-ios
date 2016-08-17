@@ -18,7 +18,7 @@ class CSVDataSync: NSObject {
      List of datasets (in csv format) that must be downloaded.
      */
     static let csvDataURLs: [String] = [
-        "https://www.dropbox.com/s/h3v1o1quzn5p370/dataset.csv?dl=1"
+       // "https://www.dropbox.com/s/h3v1o1quzn5p370/dataset.csv?dl=1"
     ]
     
     /**

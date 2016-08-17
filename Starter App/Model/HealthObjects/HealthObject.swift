@@ -9,9 +9,14 @@
 import Foundation
 import RealmSwift
 
+//TODO-ADD-NEW-DATA-TYPE
+//add in a string for a new datatype here
+//this is used for the HealthObject
+
 // rawValues must be in lowercase
 enum HealthObjectType: String {
     case Weight = "weight"
+    case Step = "step"
 }
 
 /// A HealthObject that contains generic information such as type, source, date, and etc. Health specific data is not stored here. See HealthData.

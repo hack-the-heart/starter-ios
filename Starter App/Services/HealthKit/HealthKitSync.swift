@@ -14,16 +14,34 @@ import RealmSwift
 // MARK: HealthKit
 /// Read/Write/Background Delivery Objects
 
+
+//TODO-ADD-NEW-DATA-TYPE
+//Add in the right objects for read/write/and background delivery permissions here.
+//For example, if I wanted support for steps, I would add:
+//  READ:
+//      HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierStepCount)!
+//
+//  WRITE:
+//      HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierStepCount)!
+//
+//  BACKGROUND:
+//      HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierStepCount)!
+
+
+
 let readHKObjects = [
-    HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!
+    HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!,
+    HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierStepCount)!
 ]
 
 let writeHKSamples = [
-    HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!
+    HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!,
+    HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierStepCount)!
 ]
 
 let backgroundDeliveryHKSamples = [
-    HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!
+    HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!,
+    HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierStepCount)!
 ]
 
 /// HealthKitSync pulls in data from HealthKit and stores it locally in realm
@@ -93,18 +111,22 @@ class HealthKitSync: NSObject {
             return nil
         })
         
-        switch typeIdentifier {
-        case HKQuantityTypeIdentifierBodyMass:
-            for result in filteredResults {
+        //TODO-ADD-NEW-DATA-TYPE
+        //Add support for handling the new data type on background update here.
+        for result in filteredResults {
+            switch typeIdentifier {
+            case HKQuantityTypeIdentifierBodyMass:
                 HealthKitSync.saveHKWeightData_ToRealmAndServer(result)
+            case HKQuantityTypeIdentifierStepCount:
+                HealthKitSync.saveHKStepData_ToRealmAndServer(result)
+            default:
+                break
             }
-        default:
-            break
         }
     }
     
     // MARK: - CLASS FUNCTIONS
-    // MARK: Save Realm Data to HK    
+    // MARK: Save Realm Data to HK
     /**
      Saves realm data to healthkit.
      
@@ -121,28 +143,28 @@ class HealthKitSync: NSObject {
      - throws: some error
      */
     class func saveRealmData_ToHealthKit(withRealmID realmID: String) throws {
-//        let realm = try! Realm()
-//        guard let weightObj = realm.objects(Weight).filter("id == %@", realmID).first,
-//            let weightValue = weightObj.value.value,
-//            let startDate = weightObj.date else { return }
-//        
-//        let quantity = HKQuantity(unit: HKUnit.poundUnit(), doubleValue: weightValue)
-//        
-//        let bodyMass = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!
-//        
-//        let newSample = HKQuantitySample(type: bodyMass, quantity: quantity, startDate: startDate, endDate: startDate)
-//        
-//        HealthKitManager.sharedInstance.hkHealthStore.saveObject(newSample) { (success, error) in
-//            if success == true {
-//                do {
-//                    try ObjectIDMap.store(realmID: realmID, healthkitUUID: newSample.UUID.UUIDString, serverUUID: nil)
-//                } catch {
-//                    //TODO: do something with this error
-//                }
-//            } else {
-//                //TODO: do something with this error
-//            }
-//        }
+        //        let realm = try! Realm()
+        //        guard let weightObj = realm.objects(Weight).filter("id == %@", realmID).first,
+        //            let weightValue = weightObj.value.value,
+        //            let startDate = weightObj.date else { return }
+        //
+        //        let quantity = HKQuantity(unit: HKUnit.poundUnit(), doubleValue: weightValue)
+        //
+        //        let bodyMass = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!
+        //
+        //        let newSample = HKQuantitySample(type: bodyMass, quantity: quantity, startDate: startDate, endDate: startDate)
+        //
+        //        HealthKitManager.sharedInstance.hkHealthStore.saveObject(newSample) { (success, error) in
+        //            if success == true {
+        //                do {
+        //                    try ObjectIDMap.store(realmID: realmID, healthkitUUID: newSample.UUID.UUIDString, serverUUID: nil)
+        //                } catch {
+        //                    //TODO: do something with this error
+        //                }
+        //            } else {
+        //                //TODO: do something with this error
+        //            }
+        //        }
     }
     
     // MARK: Get All Data from HK
@@ -153,6 +175,11 @@ class HealthKitSync: NSObject {
      */
     class func saveAllHKData_ToRealmAndServer() {
         saveAllHKWeightData_ToRealmAndServer()
+        
+        //TODO-ADD-NEW-DATA-TYPE
+        //Call the function that queries for new data and stores it on the server and locally
+        
+        saveAllHKStepData_ToRealmAndServer()
     }
     
     /**
@@ -167,6 +194,22 @@ class HealthKitSync: NSObject {
             
             for result in results {
                 self.saveHKWeightData_ToRealmAndServer(result.toDictionary())
+            }
+        }
+    }
+    
+    //TODO-ADD-NEW-DATA-TYPE
+    //Add a new function to support querying for all data and storing it locally and the server
+    
+    private class func saveAllHKStepData_ToRealmAndServer() {
+        let stepSampleType = HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierStepCount)!
+        
+        HealthKitManager.sharedInstance.queryForSampleType(stepSampleType, afterDate: nil, beforeDate: nil, limit: -1, sortDateAscending: false) { (sampleQuery, sampleArr, error) in
+            
+            guard let results = sampleArr else { return }
+            
+            for result in results {
+                self.saveHKStepData_ToRealmAndServer(result.toDictionary())
             }
         }
     }
@@ -203,4 +246,36 @@ class HealthKitSync: NSObject {
             print("error saving weight data to realm")
         }
     }
+    
+    
+    //TODO-ADD-NEW-DATA-TYPE
+    //Add a function to support storing healthkit data onto realm and server
+    private class func saveHKStepData_ToRealmAndServer(hkObject: [String:AnyObject]) {
+        let sourceName = hkObject[HKObjectKey.SourceName.rawValue] as! String
+        
+        let stepValue = hkObject[HKObjectKey.StepValue.rawValue] as! Double
+        let date = hkObject[HKObjectKey.Date.rawValue] as! NSDate
+        
+        let healthkitUUID = hkObject[HKObjectKey.HealthKitUUID.rawValue] as! String
+        
+        do {
+            
+            if let mapObject = ObjectIDMap.findMapObject(realmID: nil, healthkitUUID: healthkitUUID, serverUUID: nil) where mapObject.realmID != nil {
+                //dont do anything if object already exists
+            } else {
+                //save to realm
+                let healthObjType = HealthObjectType.Step.rawValue
+                let weightHealthObj = try HealthObject.saveToRealm(healthObjType, date: date, source: sourceName)
+                let _ = try HealthData.saveToRealm("value", value: String(stepValue), healthObj: weightHealthObj)
+                
+                try ObjectIDMap.store(realmID: weightHealthObj.id, healthkitUUID: healthkitUUID, serverUUID: nil)
+                
+                ServerSync.sharedInstance.uploadData_ToServer(withRealmID: weightHealthObj.id)
+            }
+        } catch {
+            print("error saving weight data to realm")
+        }
+
+    }
+    
 }

@@ -9,6 +9,7 @@
 import Foundation
 import ObjectiveCloudant
 import RealmSwift
+import HealthKit
 
 /// ServerSync.swift pulls down data from the server and stores it locally.
 class ServerSync: NSObject {
@@ -81,7 +82,7 @@ class ServerSync: NSObject {
         findOperation.documentFoundBlock = {(document) -> Void in
             print("Found document \(document)")
             
-            let serverUUID = document["_id"] as! String
+//            let serverUUID = document["_id"] as! String
             let sourceName = document["sourceName"] as! String
             let healthObjType = document["healthObjType"] as! String
             let dateInSeconds = document["dateInSeconds"] as! Double
@@ -93,34 +94,31 @@ class ServerSync: NSObject {
             
             let data = document["data"] as! [String:NSObject]
             
-            if let mapObject = ObjectIDMap.findMapObject(realmID: nil, healthkitUUID: nil, serverUUID: serverUUID) where mapObject.realmID != nil {
+            
+//            if let mapObject = ObjectIDMap.findMapObject(realmID: nil, healthkitUUID: nil, serverUUID: serverUUID) where mapObject.realmID != nil {
+//                //dont do anything if object already exists
+//            }
+            
+            if let _ = HealthData.find(usingSecondsSince1970: insertionDateInSeconds) {
                 //dont do anything if object already exists
             } else {
-                switch healthObjType.lowercaseString {
-                case HealthObjectType.Weight.rawValue:
+               
+                
+                let date = NSDate(timeIntervalSince1970: dateInSeconds)
+                
+                do {
+                    let healthObj = try HealthData.saveToRealmIfNeeded(healthObjType, date: date, source: sourceName, origin: .Server)
                     
-                    var weightValueStr = "error"
-                    if let weightValue = data["value"] {
-                        weightValueStr = String(weightValue)
+                    for (key, value) in data {
+                        try HealthDataValue.saveToRealm(key, value: String(value), healthObj: healthObj)
                     }
                     
-                    let date = NSDate(timeIntervalSince1970: dateInSeconds)
+//                    try ObjectIDMap.store(realmID: healthObj.id, healthkitUUID: nil, serverUUID: serverUUID)
                     
-                    do {
-                        let healthObjType = HealthObjectType.Weight.rawValue
-                        let weightHealthObj = try HealthObject.saveToRealm(healthObjType, date: date, source: sourceName)
-                        let _ = try HealthData.saveToRealm("value", value: weightValueStr, healthObj: weightHealthObj)
-                        
-                        try ObjectIDMap.store(realmID: weightHealthObj.id, healthkitUUID: nil, serverUUID: serverUUID)
-                        
-                        // if you wanted to store this data to healthkit, then uncomment this line
-                        //try HealthKitSync.saveRealmData_ToHealthKit(withRealmID: weightHealthObj.id)
-                    } catch {
-                        // do something with error
-                    }
-                    
-                default:
-                    break
+                    // if you wanted to store this data to healthkit, then uncomment this line
+                    //try HealthKitSync.saveRealmData_ToHealthKit(withRealmID: weightHealthObj.id)
+                } catch {
+                    // do something with error
                 }
             }
         }
@@ -131,7 +129,7 @@ class ServerSync: NSObject {
     /**
      Upload local realm data to server
      
-     - parameter realmID: pull in the HealthObject and HealthData obj using the realmId and upload that data
+     - parameter realmID: pull in the HealthData and HealthDataValue obj using the realmId and upload that data
      */
     func uploadData_ToServer(withRealmID realmID: String) {
         guard let sensorDataDB = sensorDataDB else { return }
@@ -142,7 +140,7 @@ class ServerSync: NSObject {
         documentBody["insertionDateInSeconds"] = NSDate().timeIntervalSince1970
         
         //TODO: throw an exception here
-        guard let healthObj = realm.objects(HealthObject).filter("id == %@", realmID).first else { return }
+        guard let healthObj = realm.objects(HealthData).filter("id == %@", realmID).first else { return }
         let healthDataObjArr = healthObj.dataObjects
         
         var dataDictionary: [String:String] = [:]
@@ -166,7 +164,7 @@ class ServerSync: NSObject {
                 print("Created document \(docId), at revision \(revId)")
                 
                 do {
-                    try ObjectIDMap.store(realmID: realmID, healthkitUUID: nil, serverUUID: docId)
+//                    try ObjectIDMap.store(realmID: realmID, healthkitUUID: nil, serverUUID: docId)
                 } catch {
                     //do something with error
                 }

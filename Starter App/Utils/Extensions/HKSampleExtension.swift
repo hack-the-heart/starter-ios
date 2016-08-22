@@ -32,9 +32,9 @@ extension HKSample {
         
         switch self.sampleType.identifier {
         case HKQuantityTypeIdentifierBodyMass:
-            sampleSpecificDict = weightValuesToDictionary()
+            sampleSpecificDict = quantitySampleToDictionary(HKUnit.poundUnit())
         case HKQuantityTypeIdentifierStepCount:
-            sampleSpecificDict = stepValuesToDictionary()
+            sampleSpecificDict = quantitySampleToDictionary(HKUnit.countUnit())
         default:
             break
         }
@@ -46,27 +46,34 @@ extension HKSample {
         return resultDict
     }
     
-    /**
-     Converts Weight specific HKSamples to a dictionary.
-     */
-    private func weightValuesToDictionary() -> [String: AnyObject] {
+    private func quantitySampleToDictionary(unit: HKUnit) -> [String: AnyObject] {
         guard let quantitySample = self as? HKQuantitySample else { return [:] }
         
-        let weightValue = quantitySample.quantity.doubleValueForUnit(HKUnit.poundUnit())
-        return [HKObjectKey.WeightValue.rawValue: weightValue]
+        let value = quantitySample.quantity.doubleValueForUnit(unit)
+        return [HKObjectKey.Value.rawValue: value]
     }
     
-    
-    //TODO-ADD-NEW-DATA-TYPE
-    //ADD in a function to handle parsing specific values inside a HealthKit object
-    
-    /**
-     Converts Step specific HKSamples to a dictionary.
-     */
-    private func stepValuesToDictionary() -> [String: AnyObject] {
-        guard let quantitySample = self as? HKQuantitySample else { return [:] }
-        
-        let stepValue = quantitySample.quantity.doubleValueForUnit(HKUnit.countUnit())
-        return [HKObjectKey.StepValue.rawValue: stepValue]
-    }
+//    /**
+//     Converts Weight specific HKSamples to a dictionary.
+//     */
+//    private func weightValuesToDictionary() -> [String: AnyObject] {
+//        guard let quantitySample = self as? HKQuantitySample else { return [:] }
+//        
+//        let weightValue = quantitySample.quantity.doubleValueForUnit(HKUnit.poundUnit())
+//        return [HKObjectKey.WeightValue.rawValue: weightValue]
+//    }
+//    
+//    
+//    //T1ODO-ADD-NEW-DATA-TYPE
+//    //ADD in a function to handle parsing specific values inside a HealthKit object
+//    
+//    /**
+//     Converts Step specific HKSamples to a dictionary.
+//     */
+//    private func stepValuesToDictionary() -> [String: AnyObject] {
+//        guard let quantitySample = self as? HKQuantitySample else { return [:] }
+//        
+//        let stepValue = quantitySample.quantity.doubleValueForUnit(HKUnit.countUnit())
+//        return [HKObjectKey.StepValue.rawValue: stepValue]
+//    }
 }

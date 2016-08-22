@@ -9,15 +9,14 @@
 import Foundation
 import HealthKit
 
-//TODO-ADD-NEW-DATA-TYPE
+//T1ODO-ADD-NEW-DATA-TYPE
 //Add in a key for the values inside a HKObject
 //This is used to parse the values out of the HK Object and store it in a dictionary
 enum HKObjectKey: String {
     case Date = "date"
     case SourceName = "sourceName"
     case HealthKitUUID = "healthkitUUID"
-    case WeightValue = "weightValue"
-    case StepValue = "stepValue"
+    case Value = "value"
 }
 
 /// Manages HealthKit authorization, querying, storing, etc.

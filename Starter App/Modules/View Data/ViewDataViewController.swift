@@ -15,12 +15,12 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
     @IBOutlet weak var tableView: UITableView!
     
     //property for storing a selected cell in a tableview. this is passed to ViewSpecificDataViewController
-    var selectedHealthObject: String?
+    var selectedHealthData: String?
     
-    //container to store HealthObjects. Used for UITableView
+    //container to store HealthDatas. Used for UITableView
     var healthObjects: [String] = []
     
-    /// realm notification to monitor any changes/additions to the realm obj: "HealthObject"
+    /// realm notification to monitor any changes/additions to the realm obj: "HealthData"
     var realmNotification: NotificationToken?
     
     //MARK: - Application Lifecycle
@@ -39,7 +39,7 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
         super.viewDidAppear(animated)
         
         let realm = try! Realm()
-        realmNotification = realm.objects(HealthObject).addNotificationBlock({ (notification) in
+        realmNotification = realm.objects(HealthData).addNotificationBlock({ (notification) in
             self.reloadData()
         })
         
@@ -62,10 +62,10 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "DisplayHealthObjectData",
-            let selectedHealthObject = self.selectedHealthObject,
+            let selectedHealthData = self.selectedHealthData,
             let viewController = segue.destinationViewController as? ViewSpecificDataViewController {
             
-            viewController.healthObjectType = selectedHealthObject
+            viewController.healthObjectType = selectedHealthData
             
         }
     }
@@ -74,7 +74,7 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
     
     func reloadData() {
         let realm = try! Realm()
-        healthObjects = Array(Set(realm.objects(HealthObject).valueForKey("type") as! [String]))
+        healthObjects = Array(Set(realm.objects(HealthData).valueForKey("type") as! [String]))
         
         self.tableView.reloadData()
     }
@@ -99,7 +99,7 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         guard let cell = tableView.cellForRowAtIndexPath(indexPath) as? HealthDataTableViewCell else { return }
         
-        selectedHealthObject = cell.healthObjType
+        selectedHealthData = cell.healthObjType
         self.performSegueWithIdentifier("DisplayHealthObjectData", sender: self)
     }
     

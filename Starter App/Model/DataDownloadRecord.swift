@@ -1,5 +1,5 @@
 //
-//  HealthObject.swift
+//  HealthData.swift
 //  Starter App
 //
 //  Created by ismails on 6/2/16.

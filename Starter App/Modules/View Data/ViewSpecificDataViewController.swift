@@ -1,5 +1,5 @@
 //
-//  HealthObjectDataViewController.swift
+//  HealthDataDataViewController.swift
 //  Starter App
 //
 //  Created by ismails on 6/21/16.
@@ -17,7 +17,7 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
     
     var healthObjectType: String?
     
-    var realmHealthObjects: Results<HealthObject>?
+    var realmHealthObjects: Results<HealthData>?
     
     var realmNotification: NotificationToken?
     
@@ -39,7 +39,7 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
         guard let healthObjTypeStr = healthObjectType else { return }
         
         let realm = try! Realm()
-        realmNotification = realm.objects(HealthObject).filter("type == %@", healthObjTypeStr).addNotificationBlock({ (notification) in
+        realmNotification = realm.objects(HealthData).filter("type == %@", healthObjTypeStr).addNotificationBlock({ (notification) in
             self.reloadData()
         })
         
@@ -67,7 +67,7 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
         
         let realm = try! Realm()
         
-        realmHealthObjects = realm.objects(HealthObject).filter("type == %@", healthObjTypeStr)
+        realmHealthObjects = realm.objects(HealthData).filter("type == %@", healthObjTypeStr)
         self.tableView.reloadData()
     }
     

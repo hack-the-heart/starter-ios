@@ -140,10 +140,11 @@ class CSVDataSync: NSObject {
                 }
                 
                 do {
-                    let healthObj = try HealthObject.saveToRealm(headers[index], date: dateObj, source: "csv")
-                    try HealthData.saveToRealm("value", value: itemInRow, healthObj: healthObj)
+                    let healthObj = try HealthData.saveToRealmIfNeeded(headers[index], date: dateObj, source: "csv", origin: .CSV)
+//                    let healthObj = try HealthData.saveToRealm(headers[index], date: dateObj, source: "csv")
+                    try HealthDataValue.saveToRealm("value", value: itemInRow, healthObj: healthObj)
                     
-                    try ObjectIDMap.store(realmID: healthObj.id, healthkitUUID: nil, serverUUID: nil)
+//                    try ObjectIDMap.store(realmID: healthObj.id, healthkitUUID: nil, serverUUID: nil)
                 } catch {
                     print(error)
                 }

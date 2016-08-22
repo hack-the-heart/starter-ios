@@ -223,22 +223,27 @@ class HealthKitSync: NSObject {
     private class func saveHKWeightData_ToRealmAndServer(hkObject: [String:AnyObject]) {
         let sourceName = hkObject[HKObjectKey.SourceName.rawValue] as! String
         
-        let weightValue = hkObject[HKObjectKey.WeightValue.rawValue] as! Double
+        let weightValue = hkObject[HKObjectKey.Value.rawValue] as! Double
         let date = hkObject[HKObjectKey.Date.rawValue] as! NSDate
         
         let healthkitUUID = hkObject[HKObjectKey.HealthKitUUID.rawValue] as! String
         
         do {
             
-            if let mapObject = ObjectIDMap.findMapObject(realmID: nil, healthkitUUID: healthkitUUID, serverUUID: nil) where mapObject.realmID != nil {
+            //            if let mapObject = ObjectIDMap.findMapObject(realmID: nil, healthkitUUID: healthkitUUID, serverUUID: nil) where mapObject.realmID != nil {
+            //                //dont do anything if object already exists
+            //            } else {
+            
+            if let _ = HealthData.find(usingDate: date) {
                 //dont do anything if object already exists
             } else {
-                //save to realm
-                let healthObjType = HealthObjectType.Weight.rawValue
-                let weightHealthObj = try HealthObject.saveToRealm(healthObjType, date: date, source: sourceName)
-                let _ = try HealthData.saveToRealm("value", value: String(weightValue), healthObj: weightHealthObj)
                 
-                try ObjectIDMap.store(realmID: weightHealthObj.id, healthkitUUID: healthkitUUID, serverUUID: nil)
+                //save to realm
+                let healthObjType = HealthDataType.Weight
+                let weightHealthObj = try HealthData.saveToRealmIfNeeded(healthObjType.rawValue, date: date, source: sourceName, origin:.HealthKit)
+                let _ = try HealthDataValue.saveToRealm("value", value: String(weightValue), healthObj: weightHealthObj)
+                
+                //                try ObjectIDMap.store(realmID: weightHealthObj.id, healthkitUUID: healthkitUUID, serverUUID: nil)
                 
                 ServerSync.sharedInstance.uploadData_ToServer(withRealmID: weightHealthObj.id)
             }
@@ -253,29 +258,33 @@ class HealthKitSync: NSObject {
     private class func saveHKStepData_ToRealmAndServer(hkObject: [String:AnyObject]) {
         let sourceName = hkObject[HKObjectKey.SourceName.rawValue] as! String
         
-        let stepValue = hkObject[HKObjectKey.StepValue.rawValue] as! Double
+        let stepValue = hkObject[HKObjectKey.Value.rawValue] as! Double
         let date = hkObject[HKObjectKey.Date.rawValue] as! NSDate
         
         let healthkitUUID = hkObject[HKObjectKey.HealthKitUUID.rawValue] as! String
         
         do {
             
-            if let mapObject = ObjectIDMap.findMapObject(realmID: nil, healthkitUUID: healthkitUUID, serverUUID: nil) where mapObject.realmID != nil {
+            //            if let mapObject = ObjectIDMap.findMapObject(realmID: nil, healthkitUUID: healthkitUUID, serverUUID: nil) where mapObject.realmID != nil {
+            //                //dont do anything if object already exists
+            //            } else {
+            if let _ = HealthData.find(usingDate: date) {
                 //dont do anything if object already exists
             } else {
                 //save to realm
-                let healthObjType = HealthObjectType.Step.rawValue
-                let weightHealthObj = try HealthObject.saveToRealm(healthObjType, date: date, source: sourceName)
-                let _ = try HealthData.saveToRealm("value", value: String(stepValue), healthObj: weightHealthObj)
+                let healthObjType = HealthDataType.Step
+                let stepHealthObj = try HealthData.saveToRealmIfNeeded(healthObjType.rawValue, date: date, source: sourceName, origin:.HealthKit)
+//                let weightHealthObj = try HealthData.saveToRealm(healthObjType.rawValue, date: date, source: sourceName)
+                let _ = try HealthDataValue.saveToRealm("value", value: String(stepValue), healthObj: stepHealthObj)
                 
-                try ObjectIDMap.store(realmID: weightHealthObj.id, healthkitUUID: healthkitUUID, serverUUID: nil)
+//                try ObjectIDMap.store(realmID: weightHealthObj.id, healthkitUUID: healthkitUUID, serverUUID: nil)
                 
-                ServerSync.sharedInstance.uploadData_ToServer(withRealmID: weightHealthObj.id)
+                ServerSync.sharedInstance.uploadData_ToServer(withRealmID: stepHealthObj.id)
             }
         } catch {
             print("error saving weight data to realm")
         }
-
+        
     }
     
 }

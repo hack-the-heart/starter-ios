@@ -41,6 +41,10 @@ class HealthData: Object {
     let dataObjects = LinkingObjects(fromType: HealthDataValue.self, property: "healthObject")
     
     class func saveToRealmIfNeeded(typeStr: String, date: NSDate, source: String, origin: HealthOrigin) throws -> HealthData  {
+        if let healthDataObj = HealthData.find(usingDate: date) {
+            return healthDataObj
+        }
+        
         return try HealthData.saveToRealm(typeStr, date: date, source: source, origin: origin)
     }
     

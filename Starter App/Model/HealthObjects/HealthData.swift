@@ -9,16 +9,6 @@
 import Foundation
 import RealmSwift
 
-//TODO-ADD-NEW-DATA-TYPE
-//add in a string for a new datatype here
-//this is used for the HealthData
-
-//// rawValues must be in lowercase
-enum HealthDataType: String {
-    case Weight = "weight"
-    case Step = "step"
-}
-
 enum HealthOrigin: String {
     case HealthKit = "healthkit"
     case SelfReported = "self-reported"
@@ -40,19 +30,21 @@ class HealthData: Object {
      */
     let dataObjects = LinkingObjects(fromType: HealthDataValue.self, property: "healthObject")
     
-    class func saveToRealmIfNeeded(typeStr: String, date: NSDate, source: String, origin: HealthOrigin) throws -> HealthData  {
-        if let healthDataObj = HealthData.find(usingDate: date) {
-            return healthDataObj
-        }
-        
-        return try HealthData.saveToRealm(typeStr, date: date, source: source, origin: origin)
-    }
-    
-    private class func saveToRealm(typeStr: String, date: NSDate, source: String, origin: HealthOrigin) throws -> HealthData  {
+    class func saveToRealm(type: String, date: NSDate, source: String, origin: HealthOrigin, overrideExisting: Bool = false) throws -> HealthData  {
         let realm = try! Realm()
         
+        if let healthDataObj = HealthData.find(usingDate: date) {
+            if overrideExisting {
+                try realm.write {
+                    realm.delete(healthDataObj)
+                }                
+            } else {
+                return healthDataObj
+            }
+        }
+        
         let healthObj = HealthData()
-        healthObj.type = typeStr
+        healthObj.type = type
         healthObj.date = date
         healthObj.source = source
         healthObj.origin = origin.rawValue

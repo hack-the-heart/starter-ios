@@ -94,11 +94,6 @@ class ServerSync: NSObject {
             
             let data = document["data"] as! [String:NSObject]
             
-            
-//            if let mapObject = ObjectIDMap.findMapObject(realmID: nil, healthkitUUID: nil, serverUUID: serverUUID) where mapObject.realmID != nil {
-//                //dont do anything if object already exists
-//            }
-            
             if let _ = HealthData.find(usingSecondsSince1970: insertionDateInSeconds) {
                 //dont do anything if object already exists
             } else {
@@ -107,13 +102,11 @@ class ServerSync: NSObject {
                 let date = NSDate(timeIntervalSince1970: dateInSeconds)
                 
                 do {
-                    let healthObj = try HealthData.saveToRealmIfNeeded(healthObjType, date: date, source: sourceName, origin: .Server)
+                    let healthObj = try HealthData.saveToRealm(healthObjType, date: date, source: sourceName, origin: .Server)
                     
                     for (key, value) in data {
                         try HealthDataValue.saveToRealm(key, value: String(value), healthObj: healthObj)
                     }
-                    
-//                    try ObjectIDMap.store(realmID: healthObj.id, healthkitUUID: nil, serverUUID: serverUUID)
                     
                     // if you wanted to store this data to healthkit, then uncomment this line
                     //try HealthKitSync.saveRealmData_ToHealthKit(withRealmID: weightHealthObj.id)
@@ -156,18 +149,14 @@ class ServerSync: NSObject {
         // throw an error here
         guard documentBody.count != 0 else { return }
         
+        //TODO: check to see if a document with the same timestamp exists first
+        
         sensorDataDB.putDocumentWithId(NSUUID().UUIDString, body: documentBody, completionHandler: {
             (docId, revId, statusCode, operationError) -> Void in
             if let error = operationError {
                 print("Encountered an error creating document. Error: \(error)")
             } else {
                 print("Created document \(docId), at revision \(revId)")
-                
-                do {
-//                    try ObjectIDMap.store(realmID: realmID, healthkitUUID: nil, serverUUID: docId)
-                } catch {
-                    //do something with error
-                }
             }
         })
     }

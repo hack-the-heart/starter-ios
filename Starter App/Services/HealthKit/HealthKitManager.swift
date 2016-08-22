@@ -276,12 +276,12 @@ class HealthKitManager {
             return
         }
         
-        let sampleResultsDict = sampleResults.map { $0.toDictionary() }
+        //let sampleResultsDict = sampleResults.map { $0.toDictionary() }
         let typeIdentifier = query.objectType?.identifier
         
         let userInfo: [String: AnyObject] = [
             NotificationUserInfoKey.HKObjectTypeId.rawValue: typeIdentifier != nil ? typeIdentifier! : "Unknown",
-            NotificationUserInfoKey.HKObjects.rawValue: sampleResultsDict]
+            NotificationUserInfoKey.HKObjects.rawValue: sampleResults]
         
         dispatch_async(dispatch_get_main_queue(), {
             NSNotificationCenter.defaultCenter().postNotificationName(Notification.BackgroundDeliveryResultSuccess.rawValue, object: HealthKitManager.sharedInstance, userInfo: userInfo)

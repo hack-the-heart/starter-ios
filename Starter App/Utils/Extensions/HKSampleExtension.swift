@@ -15,43 +15,43 @@ extension HKSample {
      
      - returns: <#return value description#>
      */
-    func toDictionary() -> [String: AnyObject] {
-        let date = self.startDate
-        let healthkit_uuid = self.UUID.UUIDString
-        let sourceName = self.sourceRevision.source.name
-        
-        var resultDict: [String: AnyObject] = [:]
-        resultDict[HKObjectKey.Date.rawValue] = date
-        resultDict[HKObjectKey.HealthKitUUID.rawValue] = healthkit_uuid
-        resultDict[HKObjectKey.SourceName.rawValue] = sourceName
-        
-        var sampleSpecificDict: [String: AnyObject] = [:]
-        
-        //TODO-ADD-NEW-DATA-TYPE
-        //ADD in support to parse specific values inside a HealthKit object
-        
-        switch self.sampleType.identifier {
-        case HKQuantityTypeIdentifierBodyMass:
-            sampleSpecificDict = quantitySampleToDictionary(HKUnit.poundUnit())
-        case HKQuantityTypeIdentifierStepCount:
-            sampleSpecificDict = quantitySampleToDictionary(HKUnit.countUnit())
-        default:
-            break
-        }
-        
-        for keyValPair in sampleSpecificDict {
-            resultDict[keyValPair.0] = keyValPair.1
-        }
-        
-        return resultDict
-    }
-    
-    private func quantitySampleToDictionary(unit: HKUnit) -> [String: AnyObject] {
-        guard let quantitySample = self as? HKQuantitySample else { return [:] }
-        
-        let value = quantitySample.quantity.doubleValueForUnit(unit)
-        return [HKObjectKey.Value.rawValue: value]
-    }
+//    func toDictionary() -> [String: AnyObject] {
+//        let date = self.startDate
+//        let healthkit_uuid = self.UUID.UUIDString
+//        let sourceName = self.sourceRevision.source.name
+//        
+//        var resultDict: [String: AnyObject] = [:]
+//        resultDict[HKObjectKey.Date.rawValue] = date
+//        resultDict[HKObjectKey.HealthKitUUID.rawValue] = healthkit_uuid
+//        resultDict[HKObjectKey.SourceName.rawValue] = sourceName
+//        
+//        var sampleSpecificDict: [String: AnyObject] = [:]
+//        
+//        //T1ODO-ADD-NEW-DATA-TYPE
+//        //ADD in support to parse specific values inside a HealthKit object
+//        
+//        switch self.sampleType.identifier {
+//        case HKQuantityTypeIdentifierBodyMass:
+//            sampleSpecificDict = quantitySampleToDictionary(HKUnit.poundUnit())
+//        case HKQuantityTypeIdentifierStepCount:
+//            sampleSpecificDict = quantitySampleToDictionary(HKUnit.countUnit())
+//        default:
+//            break
+//        }
+//        
+//        for keyValPair in sampleSpecificDict {
+//            resultDict[keyValPair.0] = keyValPair.1
+//        }
+//        
+//        return resultDict
+//    }
+//    
+//    private func quantitySampleToDictionary(unit: HKUnit) -> [String: AnyObject] {
+//        guard let quantitySample = self as? HKQuantitySample else { return [:] }
+//        
+//        let value = quantitySample.quantity.doubleValueForUnit(unit)
+//        return [HKObjectKey.Value.rawValue: value]
+//    }
     
 //    /**
 //     Converts Weight specific HKSamples to a dictionary.

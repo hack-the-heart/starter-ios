@@ -140,7 +140,7 @@ class CSVDataSync: NSObject {
                 }
                 
                 do {
-                    let healthObj = try HealthData.saveToRealmIfNeeded(headers[index], date: dateObj, source: "csv", origin: .CSV)
+                    let healthObj = try HealthData.saveToRealm(headers[index], date: dateObj, source: "csv", origin: .CSV)
 //                    let healthObj = try HealthData.saveToRealm(headers[index], date: dateObj, source: "csv")
                     try HealthDataValue.saveToRealm("value", value: itemInRow, healthObj: healthObj)
                     

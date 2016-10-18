@@ -27,26 +27,26 @@ class ServerSync: NSObject {
     
     /// lastSyncTimestamp is used to determine when the app last synced. 
     /// This is used to fetch new records from the last synced timestamp.
-    var lastSyncTimestamp: NSDate {
+    var lastSyncTimestamp: Date {
         get {
-            let defaults = NSUserDefaults.standardUserDefaults()
-            if let date = defaults.objectForKey("lastSyncTimestamp") as? NSDate {
+            let defaults = UserDefaults.standard
+            if let date = defaults.object(forKey: "lastSyncTimestamp") as? Date {
                 return date
             }
             
-            return NSDate(timeIntervalSince1970: 0)
+            return Date(timeIntervalSince1970: 0)
         }
         set {
-            let defaults = NSUserDefaults.standardUserDefaults()
-            defaults.setObject(newValue, forKey: "lastSyncTimestamp")
+            let defaults = UserDefaults.standard
+            defaults.set(newValue, forKey: "lastSyncTimestamp")
         }
     }
     
     override init() {
         super.init()
         
-        if let url = NSURL(string: databaseUrl) {
-            cloudantClient = CDTCouchDBClient(forURL: url, username: dbUsername, password: dbPassword)
+        if let url = URL(string: databaseUrl) {
+            cloudantClient = CDTCouchDBClient(for: url, username: dbUsername, password: dbPassword)
             sensorDataDB = cloudantClient?[databaseName]
         }
         
@@ -65,10 +65,12 @@ class ServerSync: NSObject {
             ["insertionDateInSeconds" : "asc"]
         ]
         
+        let selector = [
+            "$gt" : String(describing: lastSyncTimestamp.timeIntervalSince1970)
+        ]
+        
         findOperation.selector = [
-            "insertionDateInSeconds": [
-                "$gt" : lastSyncTimestamp.timeIntervalSince1970
-            ]
+            "insertionDateInSeconds": selector as NSObject
         ]
         
         findOperation.findDocumentsCompletionBlock = {(bookmark, error) -> Void in
@@ -89,7 +91,7 @@ class ServerSync: NSObject {
             let insertionDateInSeconds = document["insertionDateInSeconds"] as! Double
             
             if insertionDateInSeconds > self.lastSyncTimestamp.timeIntervalSince1970 {
-                self.lastSyncTimestamp = NSDate(timeIntervalSince1970: insertionDateInSeconds)
+                self.lastSyncTimestamp = Date(timeIntervalSince1970: insertionDateInSeconds)
             }
             
             let data = document["data"] as! [String:NSObject]
@@ -99,13 +101,13 @@ class ServerSync: NSObject {
             } else {
                
                 
-                let date = NSDate(timeIntervalSince1970: dateInSeconds)
+                let date = Date(timeIntervalSince1970: dateInSeconds)
                 
                 do {
                     let healthObj = try HealthData.saveToRealm(healthObjType, date: date, source: sourceName, origin: .Server)
                     
                     for (key, value) in data {
-                        try HealthDataValue.saveToRealm(key, value: String(value), healthObj: healthObj)
+                        let _ = try HealthDataValue.saveToRealm(key, value: String(describing: value), healthObj: healthObj)
                     }
                     
                     // if you wanted to store this data to healthkit, then uncomment this line
@@ -116,7 +118,7 @@ class ServerSync: NSObject {
             }
         }
         
-        sensorDataDB.addOperation(findOperation)
+        sensorDataDB.add(findOperation)
     }
     
     /**
@@ -130,10 +132,10 @@ class ServerSync: NSObject {
         let realm = try! Realm()
         
         var documentBody: [String:NSObject] = [:]
-        documentBody["insertionDateInSeconds"] = NSDate().timeIntervalSince1970
+        documentBody["insertionDateInSeconds"] = Date().timeIntervalSince1970 as NSObject?
         
         //TODO: throw an exception here
-        guard let healthObj = realm.objects(HealthData).filter("id == %@", realmID).first else { return }
+        guard let healthObj = realm.objects(HealthData.self).filter("id == %@", realmID).first else { return }
         let healthDataObjArr = healthObj.dataObjects
         
         var dataDictionary: [String:String] = [:]
@@ -141,17 +143,17 @@ class ServerSync: NSObject {
             dataDictionary[healthDataObj.label!] = healthDataObj.value!
         }
         
-        documentBody["healthObjType"] = healthObj.type
-        documentBody["dateInSeconds"] = healthObj.date!.timeIntervalSince1970
-        documentBody["data"] = dataDictionary
-        documentBody["sourceName"] = healthObj.source!
+        documentBody["healthObjType"] = healthObj.type as NSObject?
+        documentBody["dateInSeconds"] = healthObj.date!.timeIntervalSince1970 as NSObject?
+        documentBody["data"] = dataDictionary as NSObject?
+        documentBody["sourceName"] = healthObj.source! as NSObject?
         
         // throw an error here
         guard documentBody.count != 0 else { return }
         
         //TODO: check to see if a document with the same timestamp exists first
         
-        sensorDataDB.putDocumentWithId(NSUUID().UUIDString, body: documentBody, completionHandler: {
+        sensorDataDB.putDocument(withId: UUID().uuidString, body: documentBody, completionHandler: {
             (docId, revId, statusCode, operationError) -> Void in
             if let error = operationError {
                 print("Encountered an error creating document. Error: \(error)")

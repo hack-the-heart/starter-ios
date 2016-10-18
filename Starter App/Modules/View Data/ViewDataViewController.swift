@@ -35,18 +35,18 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
         // Dispose of any resources that can be recreated.
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         let realm = try! Realm()
-        realmNotification = realm.objects(HealthData).addNotificationBlock({ (notification) in
+        realmNotification = realm.objects(HealthData.self).addNotificationBlock({ (notification) in
             self.reloadData()
         })
         
         reloadData()
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
         realmNotification?.stop()
@@ -60,10 +60,10 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "DisplayHealthObjectData",
             let selectedHealthData = self.selectedHealthData,
-            let viewController = segue.destinationViewController as? ViewSpecificDataViewController {
+            let viewController = segue.destination as? ViewSpecificDataViewController {
             
             viewController.healthObjectType = selectedHealthData
             
@@ -74,33 +74,33 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
     
     func reloadData() {
         let realm = try! Realm()
-        healthObjects = Array(Set(realm.objects(HealthData).valueForKey("type") as! [String]))
+        healthObjects = Array(Set(realm.objects(HealthData.self).value(forKey: "type") as! [String]))
         
         self.tableView.reloadData()
     }
     
     //MARK: - TableView Delegates
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return healthObjects.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCellWithIdentifier("DataCell", forIndexPath: indexPath) as? HealthDataTableViewCell else {
-            return tableView.dequeueReusableCellWithIdentifier("DataCell", forIndexPath: indexPath)
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "DataCell", for: indexPath) as? HealthDataTableViewCell else {
+            return tableView.dequeueReusableCell(withIdentifier: "DataCell", for: indexPath)
         }
         
-        cell.title.text = healthObjects[indexPath.item]
-        cell.healthObjType = healthObjects[indexPath.item]
+        cell.title.text = healthObjects[(indexPath as NSIndexPath).item]
+        cell.healthObjType = healthObjects[(indexPath as NSIndexPath).item]
         
         return cell
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        guard let cell = tableView.cellForRowAtIndexPath(indexPath) as? HealthDataTableViewCell else { return }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath) as? HealthDataTableViewCell else { return }
         
         selectedHealthData = cell.healthObjType
-        self.performSegueWithIdentifier("DisplayHealthObjectData", sender: self)
+        self.performSegue(withIdentifier: "DisplayHealthObjectData", sender: self)
     }
     
 }

@@ -27,18 +27,18 @@ class HealthKitManager {
     // MARK: - Properties
     var didConfigureHKAuth: Bool {
         get {
-            let prefs = NSUserDefaults.standardUserDefaults()
-            return prefs.boolForKey("didConfigureHKAuth")
+            let prefs = UserDefaults.standard
+            return prefs.bool(forKey: "didConfigureHKAuth")
         }
         set {
-            let prefs = NSUserDefaults.standardUserDefaults()
-            prefs.setBool(newValue, forKey: "didConfigureHKAuth")
+            let prefs = UserDefaults.standard
+            prefs.set(newValue, forKey: "didConfigureHKAuth")
         }
     }
     
-    private var readAuthArr: [HKObjectType] = []
-    private var writeAuthArr: [HKSampleType] = []
-    private var backgroundDeliveryArr: [HKSampleType] = []
+    fileprivate var readAuthArr: [HKObjectType] = []
+    fileprivate var writeAuthArr: [HKSampleType] = []
+    fileprivate var backgroundDeliveryArr: [HKSampleType] = []
     
     let hkHealthStore = HKHealthStore()
     
@@ -71,9 +71,9 @@ class HealthKitManager {
     }
     
     // MARK: - Errors
-    enum HKAuthorizationError: ErrorType {
-        case AlreadyConfigured
-        case HealthDataUnavailable
+    enum HKAuthorizationError: Error {
+        case alreadyConfigured
+        case healthDataUnavailable
     }
     
     // MARK: - Configure
@@ -118,20 +118,20 @@ class HealthKitManager {
         // Apple only allows configuration once (CONFIRM). After the first configuration,
         // the user can update the app's health kit access settings in the Apple Health App
         guard didConfigureHKAuth == false else {
-            throw HKAuthorizationError.AlreadyConfigured
+            throw HKAuthorizationError.alreadyConfigured
         }
         
         // Not all devices support HealthKit (e.g. iPad). Check to see if health data is
         // available in the first place.
         guard HKHealthStore.isHealthDataAvailable() == true else {
-            throw HKAuthorizationError.HealthDataUnavailable
+            throw HKAuthorizationError.healthDataUnavailable
         }
         
-        hkHealthStore.requestAuthorizationToShareTypes(writeSet, readTypes: readSet) { (success, error) in
+        hkHealthStore.requestAuthorization(toShare: writeSet, read: readSet) { (success, error) in
             if success {
                 // We successfully asked for HealthKit Authorization. Send out the notification and enable background delivery.
-                dispatch_async(dispatch_get_main_queue(), {
-                    NSNotificationCenter.defaultCenter().postNotificationName(Notification.AuthorizationSuccess.rawValue, object: HealthKitManager.sharedInstance, userInfo: nil)
+                DispatchQueue.main.async(execute: {
+                    NotificationCenter.default.post(name: Foundation.Notification.Name(rawValue: Notification.AuthorizationSuccess.rawValue), object: HealthKitManager.sharedInstance, userInfo: nil)
                 })
                 
                 self.enableBackgroundDelivery(self.backgroundDeliveryArr)
@@ -142,13 +142,13 @@ class HealthKitManager {
             // Something went wrong while asking HealthKit for authorization. This does not
             // indicate whether or not we were granted authorization to read/write data from HealthKit.
             
-            var userInfo: [NSObject: AnyObject] = [:]
+            var userInfo: [AnyHashable: Any] = [:]
             if let errorObj = error {
                 userInfo[NotificationUserInfoKey.ErrorObj.rawValue] = errorObj
             }
             
-            dispatch_async(dispatch_get_main_queue(), {
-                NSNotificationCenter.defaultCenter().postNotificationName(Notification.AuthorizatonError.rawValue, object: HealthKitManager.sharedInstance, userInfo: userInfo)
+            DispatchQueue.main.async(execute: {
+                NotificationCenter.default.post(name: Foundation.Notification.Name(rawValue: Notification.AuthorizatonError.rawValue), object: HealthKitManager.sharedInstance, userInfo: userInfo)
             })
         }
         
@@ -165,23 +165,23 @@ class HealthKitManager {
      - parameter sortDateAscending:   sort by date (ascending)
      - parameter queryResultsHandler: handler for when results are returned from the query
      */
-    func queryForSampleType(sampleType: HKSampleType, afterDate: NSDate?, beforeDate: NSDate?, limit: Int, sortDateAscending: Bool, queryResultsHandler: (HKSampleQuery, [HKSample]?, NSError?) -> Void)
+    func queryForSampleType(_ sampleType: HKSampleType, afterDate: Date?, beforeDate: Date?, limit: Int, sortDateAscending: Bool, queryResultsHandler: @escaping (HKSampleQuery, [HKSample]?, NSError?) -> Void)
     {
         var predicate: NSPredicate?
         
         if(afterDate != nil && beforeDate != nil) {
-            predicate = NSPredicate(format: "(startDate >= %@) and (startDate < %@)", afterDate!, beforeDate!)
+            predicate = NSPredicate(format: "(startDate >= %@) and (startDate < %@)", afterDate! as CVarArg, beforeDate! as CVarArg)
         } else if(afterDate != nil) {
-            predicate = NSPredicate(format: "(startDate >= %@)", afterDate!)
+            predicate = NSPredicate(format: "(startDate >= %@)", afterDate! as CVarArg)
         } else if(beforeDate != nil) {
-            predicate = NSPredicate(format: "(startDate < %@)", beforeDate!)
+            predicate = NSPredicate(format: "(startDate < %@)", beforeDate! as CVarArg)
         }
         
         let sortDescriptors = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: sortDateAscending)
         
-        let query = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: [sortDescriptors], resultsHandler: queryResultsHandler)
+        let query = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: [sortDescriptors], resultsHandler: queryResultsHandler as! (HKSampleQuery, [HKSample]?, Error?) -> Void)
         
-        self.hkHealthStore.executeQuery(query)
+        self.hkHealthStore.execute(query)
     }
     
     // MARK: - Background Delivery
@@ -199,15 +199,15 @@ class HealthKitManager {
      - parameter sampleTypesArr:  objects that need to be registered for background delivery
      - parameter updateFrequency: the update frequency of the background delivery (defaults to .Immediate)
      */
-    func enableBackgroundDelivery(sampleTypesArr: [HKSampleType], updateFrequency: HKUpdateFrequency = .Immediate) {
+    func enableBackgroundDelivery(_ sampleTypesArr: [HKSampleType], updateFrequency: HKUpdateFrequency = .immediate) {
         for sampleType in sampleTypesArr {
-            self.hkHealthStore.enableBackgroundDeliveryForType(sampleType, frequency: updateFrequency) { (success, error) -> Void in
+            self.hkHealthStore.enableBackgroundDelivery(for: sampleType, frequency: updateFrequency) { (success, error) -> Void in
                 if success {
-                    let hourAgo = NSDate(timeIntervalSinceNow: -3600)
-                    let pred = NSPredicate(format: "startDate > %@", hourAgo)
+                    let hourAgo = Date(timeIntervalSinceNow: -3600)
+                    let pred = NSPredicate(format: "startDate > %@", hourAgo as CVarArg)
                     let query = HKObserverQuery(sampleType: sampleType, predicate: pred, updateHandler: self.backgroundQueryHandler)
                     
-                    self.hkHealthStore.executeQuery(query)
+                    self.hkHealthStore.execute(query)
                     
                     print("Enabled background delivery for \(sampleType)")
                 } else {
@@ -225,18 +225,18 @@ class HealthKitManager {
      - parameter completionHandler: the completion handler of the background delivery query
      - parameter error:             the error returned by the background delivery query
      */
-    func backgroundQueryHandler(query: HKObserverQuery, completionHandler: HKObserverQueryCompletionHandler, error : NSError?) {
+    func backgroundQueryHandler(_ query: HKObserverQuery, completionHandler: HKObserverQueryCompletionHandler, error : Error?) {
         guard error == nil else {
-            dispatch_async(dispatch_get_main_queue(), {
-                NSNotificationCenter.defaultCenter().postNotificationName(Notification.BackgroundDeliveryError.rawValue, object: HealthKitManager.sharedInstance, userInfo: [NotificationUserInfoKey.ErrorObj.rawValue: error!])
+            DispatchQueue.main.async(execute: {
+                NotificationCenter.default.post(name: Foundation.Notification.Name(rawValue: Notification.BackgroundDeliveryError.rawValue), object: HealthKitManager.sharedInstance, userInfo: [NotificationUserInfoKey.ErrorObj.rawValue: error!])
             })
             
             return
         }
         
         guard let sampleType = query.objectType as? HKSampleType else {
-            dispatch_async(dispatch_get_main_queue(), {
-                NSNotificationCenter.defaultCenter().postNotificationName(Notification.BackgroundDeliveryError.rawValue, object: HealthKitManager.sharedInstance, userInfo: nil)
+            DispatchQueue.main.async(execute: {
+                NotificationCenter.default.post(name: Foundation.Notification.Name(rawValue: Notification.BackgroundDeliveryError.rawValue), object: HealthKitManager.sharedInstance, userInfo: nil)
             })
             
             return
@@ -246,7 +246,7 @@ class HealthKitManager {
         
         let sampleQuery = HKSampleQuery(sampleType: sampleType, predicate: query.predicate, limit: 100, sortDescriptors: sort, resultsHandler: self.backgroundQueryResultHandler)
         
-        self.hkHealthStore.executeQuery(sampleQuery)
+        self.hkHealthStore.execute(sampleQuery)
         
         //must call when subscribing to background updates
         completionHandler()
@@ -259,18 +259,18 @@ class HealthKitManager {
      - parameter results: the results from the query that was just executed
      - parameter error:   an error returned by the sample query
      */
-    func backgroundQueryResultHandler(query: HKSampleQuery, results: [HKSample]?, error: NSError?) {
+    func backgroundQueryResultHandler(_ query: HKSampleQuery, results: [HKSample]?, error: Error?) {
         guard error == nil else {
-            dispatch_async(dispatch_get_main_queue(), {
-                NSNotificationCenter.defaultCenter().postNotificationName(Notification.BackgroundDeliveryResultError.rawValue, object: HealthKitManager.sharedInstance, userInfo: [NotificationUserInfoKey.ErrorObj.rawValue: error!])
+            DispatchQueue.main.async(execute: {
+                NotificationCenter.default.post(name: Foundation.Notification.Name(rawValue: Notification.BackgroundDeliveryResultError.rawValue), object: HealthKitManager.sharedInstance, userInfo: [NotificationUserInfoKey.ErrorObj.rawValue: error!])
             })
             
             return
         }
         
-        guard let sampleResults = results where sampleResults.count != 0 else {
-            dispatch_async(dispatch_get_main_queue(), {
-                NSNotificationCenter.defaultCenter().postNotificationName(Notification.BackgroundDeliveryResultError.rawValue, object: HealthKitManager.sharedInstance, userInfo: nil)
+        guard let sampleResults = results , sampleResults.count != 0 else {
+            DispatchQueue.main.async(execute: {
+                NotificationCenter.default.post(name: Foundation.Notification.Name(rawValue: Notification.BackgroundDeliveryResultError.rawValue), object: HealthKitManager.sharedInstance, userInfo: nil)
             })
             
             return
@@ -280,11 +280,11 @@ class HealthKitManager {
         let typeIdentifier = query.objectType?.identifier
         
         let userInfo: [String: AnyObject] = [
-            NotificationUserInfoKey.HKObjectTypeId.rawValue: typeIdentifier != nil ? typeIdentifier! : "Unknown",
-            NotificationUserInfoKey.HKObjects.rawValue: sampleResults]
+            NotificationUserInfoKey.HKObjectTypeId.rawValue: typeIdentifier != nil ? typeIdentifier! as AnyObject : "Unknown" as AnyObject,
+            NotificationUserInfoKey.HKObjects.rawValue: sampleResults as AnyObject]
         
-        dispatch_async(dispatch_get_main_queue(), {
-            NSNotificationCenter.defaultCenter().postNotificationName(Notification.BackgroundDeliveryResultSuccess.rawValue, object: HealthKitManager.sharedInstance, userInfo: userInfo)
+        DispatchQueue.main.async(execute: {
+            NotificationCenter.default.post(name: Foundation.Notification.Name(rawValue: Notification.BackgroundDeliveryResultSuccess.rawValue), object: HealthKitManager.sharedInstance, userInfo: userInfo)
         })
     }
 }

@@ -16,7 +16,7 @@ class HealthDataValue: Object {
     dynamic var label: String?
     dynamic var value: String?
     
-    class func saveToRealm(label: String, value: String, healthObj: HealthData) throws -> HealthDataValue  {
+    class func saveToRealm(_ label: String, value: String, healthObj: HealthData) throws -> HealthDataValue  {
         let realm = try! Realm()
         
         let healthDataObj = HealthDataValue()

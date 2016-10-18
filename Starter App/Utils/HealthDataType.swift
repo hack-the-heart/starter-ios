@@ -18,15 +18,19 @@ enum HealthDataType: String {
     case Weight = "weight"
     case Step = "step"
     case BloodPressure = "blood-pressure"
+    case OxygenSaturation = "oxygen-saturation"
+    case RespiratoryRate = "respiratory-rate"
 }
 
 //TODO-ADD-NEW-DATA-TYPE
 // add in support for handling new short strings here
 let healthKitShortString: [String: HealthDataType] = [
-    HKQuantityTypeIdentifierBodyMass: HealthDataType.Weight,
-    HKQuantityTypeIdentifierStepCount: HealthDataType.Step,
+    HKQuantityTypeIdentifier.bodyMass.rawValue: HealthDataType.Weight,
+    HKQuantityTypeIdentifier.stepCount.rawValue: HealthDataType.Step,
     
-    HKCorrelationTypeIdentifierBloodPressure: HealthDataType.BloodPressure,
-    HKQuantityTypeIdentifierBloodPressureDiastolic: HealthDataType.BloodPressure,
-    HKQuantityTypeIdentifierBloodPressureSystolic: HealthDataType.BloodPressure,
+    HKCorrelationTypeIdentifier.bloodPressure.rawValue: HealthDataType.BloodPressure,
+    HKQuantityTypeIdentifier.bloodPressureDiastolic.rawValue: HealthDataType.BloodPressure,
+    HKQuantityTypeIdentifier.bloodPressureSystolic.rawValue: HealthDataType.BloodPressure,
+    HKQuantityTypeIdentifier.oxygenSaturation.rawValue: HealthDataType.OxygenSaturation,
+    HKQuantityTypeIdentifier.respiratoryRate.rawValue: HealthDataType.RespiratoryRate,
 ]

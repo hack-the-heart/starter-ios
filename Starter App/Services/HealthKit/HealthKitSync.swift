@@ -30,24 +30,30 @@ import RealmSwift
 
 
 let readHKObjects = [
-    HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!,
-    HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierStepCount)!,
-    HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBloodPressureSystolic)!,
-    HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBloodPressureDiastolic)!,
+    HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!,
+    HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.stepCount)!,
+    HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!,
+    HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!,
+    HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.oxygenSaturation)!,
+    HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.respiratoryRate)!,
 ]
 
 let writeHKSamples = [
-    HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!,
-    HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierStepCount)!,
-    HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBloodPressureSystolic)!,
-    HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBloodPressureDiastolic)!,
+    HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!,
+    HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.stepCount)!,
+    HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!,
+    HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!,
+    HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.oxygenSaturation)!,
+    HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.respiratoryRate)!,
 ]
 
 let backgroundDeliveryHKSamples = [
-    HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)!,
-    HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierStepCount)!,
-    HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBloodPressureSystolic)!,
-    HKSampleType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBloodPressureDiastolic)!,
+    HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!,
+    HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.stepCount)!,
+    HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!,
+    HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!,
+    HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.oxygenSaturation)!,
+    HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.respiratoryRate)!,
 ]
 
 /// HealthKitSync pulls in data from HealthKit and stores it locally in realm
@@ -61,7 +67,7 @@ class HealthKitSync: NSObject {
         super.init()
         
         // subscribe to any notifications from HealthKitManager
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(handleHKManagerNotifications(_:)), name: nil, object: HealthKitManager.sharedInstance)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleHKManagerNotifications(_:)), name: nil, object: HealthKitManager.sharedInstance)
         
         do {
             try HealthKitManager.sharedInstance.initializeHealthKitManager(sampleTypesForReadAuth: readHKObjects, sampleTypesForWriteAuth: writeHKSamples, sampleTypesForBackgroundDelivery: backgroundDeliveryHKSamples)
@@ -71,26 +77,26 @@ class HealthKitSync: NSObject {
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     
     // MARK: - Notification Handlers
-    func handleHKManagerNotifications(notification: NSNotification) {
+    func handleHKManagerNotifications(_ notification: Foundation.Notification) {
         
-        switch notification.name {
+        switch notification.name.rawValue {
         case HealthKitManager.Notification.AuthorizationSuccess.rawValue:
             HealthKitSync.saveAllHKData_ToRealmAndServer()
             
         case HealthKitManager.Notification.AuthorizatonError.rawValue:
-            let alert: UIAlertController = UIAlertController(title: "HealthKit Authorization Error", message: "There seems to be an issue with getting access to your HealthKit data. Please allow access to data in the \"Sources\" tab, inside the Health app.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+            let alert: UIAlertController = UIAlertController(title: "HealthKit Authorization Error", message: "There seems to be an issue with getting access to your HealthKit data. Please allow access to data in the \"Sources\" tab, inside the Health app.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
             
-            let appDelegate = UIApplication.sharedApplication().delegate
-            appDelegate?.window??.rootViewController?.presentViewController(alert, animated: true, completion: nil)
+            let appDelegate = UIApplication.shared.delegate
+            appDelegate?.window??.rootViewController?.present(alert, animated: true, completion: nil)
             
         case HealthKitManager.Notification.BackgroundDeliveryResultSuccess.rawValue:
-            guard let userInfo = notification.userInfo else { return }
+            guard let userInfo = (notification as NSNotification).userInfo else { return }
             handleHKBackgroundUpdate(userInfo)
             
         default:
@@ -103,9 +109,9 @@ class HealthKitSync: NSObject {
      
      - parameter userInfo: nsnotification user info object
      */
-    func handleHKBackgroundUpdate(userInfo: [NSObject: AnyObject]) {
-        guard let typeIdentifier = userInfo[HealthKitManager.NotificationUserInfoKey.HKObjectTypeId.rawValue] as? String,
-            hkObjectsDictionary = userInfo[HealthKitManager.NotificationUserInfoKey.HKObjects.rawValue] as? [HKSample] //as? [[String: AnyObject]]
+    func handleHKBackgroundUpdate(_ userInfo: [AnyHashable: Any]) {
+        guard let _ = userInfo[HealthKitManager.NotificationUserInfoKey.HKObjectTypeId.rawValue] as? String,
+            let hkObjectsDictionary = userInfo[HealthKitManager.NotificationUserInfoKey.HKObjects.rawValue] as? [HKSample] //as? [[String: AnyObject]]
             else { return }
         
         // filter out results that are from our app. this is to avoid any duplicates.
@@ -113,12 +119,12 @@ class HealthKitSync: NSObject {
             //guard let sourceName =  hkObject.sourceRevision.source.name else { return nil }
             //[HKObjectKey.SourceName.rawValue] as? String else { return nil }
             
-            if hkObject.sourceRevision.source.name != HKSource.defaultSource().name { return hkObject }
+            if hkObject.sourceRevision.source.name != HKSource.default().name { return hkObject }
             
             return nil
         })
         
-        //TODO-ADD-NEW-DATA-TYPE
+        //TODO-ADD-NEW-DATA-TYPE-CATEGORY-SUPPORT
         //Add support for handling the new health kit object type on background update here.
         for result in filteredResults {
             if let quantitySample = result as? HKQuantitySample {
@@ -184,7 +190,7 @@ class HealthKitSync: NSObject {
                 
                 for result in results {
                     
-                    //TODO-ADD-NEW-DATA-TYPE
+                    //TODO-ADD-NEW-DATA-TYPE-CATEGORY-SUPPORT
                     //Add support for handling the new data type initial query here
                     
                     if let quantitySample = result as? HKQuantitySample {
@@ -197,9 +203,9 @@ class HealthKitSync: NSObject {
         }
     }
     
-    private class func saveHKQuantitySample_ToRealmAndServer(quantitySample: HKQuantitySample) {
+    fileprivate class func saveHKQuantitySample_ToRealmAndServer(_ quantitySample: HKQuantitySample) {
         let date = quantitySample.startDate
-        let _ = quantitySample.UUID.UUIDString
+        let _ = quantitySample.uuid.uuidString
         let sourceName = quantitySample.sourceRevision.source.name
         
         var quantitySampleValue: Double?
@@ -208,16 +214,19 @@ class HealthKitSync: NSObject {
         //TODO-ADD-NEW-DATA-TYPE
         //add in support for different quantity samples
         switch quantitySample.sampleType.identifier {
-        case HKQuantityTypeIdentifierBodyMass:
-            quantitySampleValue = quantitySample.quantity.doubleValueForUnit(HKUnit.poundUnit())
-        case HKQuantityTypeIdentifierStepCount:
-            quantitySampleValue = quantitySample.quantity.doubleValueForUnit(HKUnit.countUnit())
-        case HKQuantityTypeIdentifierBloodPressureSystolic:
+        case HKQuantityTypeIdentifier.bodyMass.rawValue:
+            quantitySampleValue = quantitySample.quantity.doubleValue(for: HKUnit.pound())
+        case HKQuantityTypeIdentifier.stepCount.rawValue:
+            quantitySampleValue = quantitySample.quantity.doubleValue(for: HKUnit.count())
+        case HKQuantityTypeIdentifier.bloodPressureSystolic.rawValue:
             dataValueName = "systolic-value"
-            quantitySampleValue = quantitySample.quantity.doubleValueForUnit(HKUnit.millimeterOfMercuryUnit())
-        case HKQuantityTypeIdentifierBloodPressureDiastolic:
-            dataValueName = "diastolic-value"
-            quantitySampleValue = quantitySample.quantity.doubleValueForUnit(HKUnit.millimeterOfMercuryUnit())
+            quantitySampleValue = quantitySample.quantity.doubleValue(for: HKUnit.millimeterOfMercury())
+        case HKQuantityTypeIdentifier.bloodPressureDiastolic.rawValue:
+            quantitySampleValue = quantitySample.quantity.doubleValue(for: HKUnit.millimeterOfMercury())
+        case HKQuantityTypeIdentifier.oxygenSaturation.rawValue:
+            quantitySampleValue = quantitySample.quantity.doubleValue(for: HKUnit.percent())
+        case HKQuantityTypeIdentifier.respiratoryRate.rawValue:
+            quantitySampleValue = quantitySample.quantity.doubleValue(for: HKUnit.count().unitDivided(by: HKUnit.second()))
         default:
             break
         }

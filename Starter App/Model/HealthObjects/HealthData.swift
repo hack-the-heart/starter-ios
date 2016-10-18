@@ -19,10 +19,10 @@ enum HealthOrigin: String {
 /// A HealthData that contains generic information such as type, source, date, and etc. Health specific data is not stored here. See HealthDataValue.
 class HealthData: Object {
     
-    dynamic var id: String = NSUUID().UUIDString
+    dynamic var id: String = UUID().uuidString
     dynamic var source: String?
     dynamic var origin: String?
-    dynamic var date: NSDate?
+    dynamic var date: Date?
     dynamic var type: String?
     
     /**
@@ -30,7 +30,7 @@ class HealthData: Object {
      */
     let dataObjects = LinkingObjects(fromType: HealthDataValue.self, property: "healthObject")
     
-    class func saveToRealm(type: String, date: NSDate, source: String, origin: HealthOrigin, overrideExisting: Bool = false) throws -> HealthData  {
+    class func saveToRealm(_ type: String, date: Date, source: String, origin: HealthOrigin, overrideExisting: Bool = false) throws -> HealthData  {
         let realm = try! Realm()
         
         if let healthDataObj = HealthData.find(usingDate: date) {
@@ -56,14 +56,14 @@ class HealthData: Object {
         return healthObj
     }
     
-    class func find(usingSecondsSince1970 seconds: NSTimeInterval) -> HealthData? {
-        return find(usingDate: NSDate(timeIntervalSince1970: seconds))
+    class func find(usingSecondsSince1970 seconds: TimeInterval) -> HealthData? {
+        return find(usingDate: Date(timeIntervalSince1970: seconds))
     }
     
-    class func find(usingDate date: NSDate) -> HealthData? {
+    class func find(usingDate date: Date) -> HealthData? {
         let realm = try! Realm()
         
-        let objects = realm.objects(HealthData).filter("date == %@", date)
+        let objects = realm.objects(HealthData.self).filter("date == %@", date)
         
         if objects.count == 0 {
             return nil

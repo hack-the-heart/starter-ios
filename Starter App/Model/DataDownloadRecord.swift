@@ -16,9 +16,9 @@ import RealmSwift
 class DataDownloadRecord: Object {
     
     dynamic var url: String?
-    dynamic var date: NSDate?
+    dynamic var date: Date?
     
-    class func saveToRealm(url: String, date: NSDate) throws -> DataDownloadRecord  {
+    class func saveToRealm(_ url: String, date: Date) throws -> DataDownloadRecord  {
         let realm = try! Realm()
         
         let record = DataDownloadRecord()

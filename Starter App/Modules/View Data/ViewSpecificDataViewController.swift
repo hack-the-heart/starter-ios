@@ -33,20 +33,20 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
         // Dispose of any resources that can be recreated.
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         guard let healthObjTypeStr = healthObjectType else { return }
         
         let realm = try! Realm()
-        realmNotification = realm.objects(HealthData).filter("type == %@", healthObjTypeStr).addNotificationBlock({ (notification) in
+        realmNotification = realm.objects(HealthData.self).filter("type == %@", healthObjTypeStr).addNotificationBlock({ (notification) in
             self.reloadData()
         })
         
         reloadData()
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
         realmNotification?.stop()
@@ -67,17 +67,17 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
         
         let realm = try! Realm()
         
-        realmHealthObjects = realm.objects(HealthData).filter("type == %@", healthObjTypeStr)
+        realmHealthObjects = realm.objects(HealthData.self).filter("type == %@", healthObjTypeStr)
         self.tableView.reloadData()
     }
     
     //MARK: - TableView Delegates
     
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let count = realmHealthObjects?.count {
             return count
         }
@@ -85,9 +85,9 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
         return 0
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCellWithIdentifier("DataCell", forIndexPath: indexPath) as? HealthDataTableViewCell else {
-            return tableView.dequeueReusableCellWithIdentifier("DataCell", forIndexPath: indexPath)
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "DataCell", for: indexPath) as? HealthDataTableViewCell else {
+            return tableView.dequeueReusableCell(withIdentifier: "DataCell", for: indexPath)
         }
         
         guard let realmHealthObjects = realmHealthObjects else {
@@ -95,7 +95,7 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
             return cell
         }
         
-        let healthObj = realmHealthObjects[indexPath.item]
+        let healthObj = realmHealthObjects[(indexPath as NSIndexPath).item]
         let healthDataObjArr = healthObj.dataObjects
         
         //set data values string
@@ -104,17 +104,17 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
             return dataObj.label! + ": " + dataObj.value!
         }
         
-        let dataValuesStr = dataValuesArr.joinWithSeparator(",")
+        let dataValuesStr = dataValuesArr.joined(separator: ",")
         
         cell.title.text = dataValuesStr
         
         //set date
         if let date = healthObj.date {
-            let formatter = NSDateFormatter()
-            formatter.dateStyle = NSDateFormatterStyle.ShortStyle
-            formatter.timeStyle = .ShortStyle
+            let formatter = DateFormatter()
+            formatter.dateStyle = DateFormatter.Style.short
+            formatter.timeStyle = .short
             
-            let dateString = formatter.stringFromDate(date)
+            let dateString = formatter.string(from: date)
             
             cell.subtitle.text = dateString
         } else {

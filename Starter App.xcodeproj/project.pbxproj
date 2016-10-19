@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		680E6CC61DB7C5E90040B481 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 680E6CC51DB7C5E90040B481 /* Session.swift */; };
 		682129C01CF87ED4004F3C0B /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 682129BF1CF87ED4004F3C0B /* HealthKitManager.swift */; };
 		682129C61CF91562004F3C0B /* HKSampleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 682129C51CF91562004F3C0B /* HKSampleExtension.swift */; };
 		684AA9EE1D57FFBA00098CBA /* CSVDataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 684AA9ED1D57FFBA00098CBA /* CSVDataSync.swift */; };
@@ -36,6 +37,7 @@
 		6808CB221CF4EEB700995BEA /* ResearchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ResearchKit.framework; path = Carthage/Build/iOS/ResearchKit.framework; sourceTree = "<group>"; };
 		6808CB251CF4EEDD00995BEA /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
 		6808CB261CF4EEDD00995BEA /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
+		680E6CC51DB7C5E90040B481 /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		680F3F231D1F0450001B1D0D /* Starter App-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Starter App-Bridging-Header.h"; sourceTree = "<group>"; };
 		682129B61CF875F7004F3C0B /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		682129B81CF8762F004F3C0B /* HomeKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HomeKit.framework; path = System/Library/Frameworks/HomeKit.framework; sourceTree = SDKROOT; };
@@ -156,6 +158,7 @@
 			children = (
 				68C949521D01127400199864 /* HealthData.swift */,
 				68F74E4E1D556E46000ADABA /* HealthDataValue.swift */,
+				680E6CC51DB7C5E90040B481 /* Session.swift */,
 			);
 			path = HealthObjects;
 			sourceTree = "<group>";
@@ -390,6 +393,7 @@
 				6890ED041D03A42000B9759C /* HealthDataTableViewCell.swift in Sources */,
 				684AA9EE1D57FFBA00098CBA /* CSVDataSync.swift in Sources */,
 				682129C01CF87ED4004F3C0B /* HealthKitManager.swift in Sources */,
+				680E6CC61DB7C5E90040B481 /* Session.swift in Sources */,
 				68F74E4F1D556E46000ADABA /* HealthDataValue.swift in Sources */,
 				6890ED0F1D049EBF00B9759C /* ObjectIDMap_dep.swift in Sources */,
 				8F6F739C1CF3F6550099920A /* ViewDataViewController.swift in Sources */,

@@ -179,7 +179,7 @@ class HealthKitManager {
         
         let sortDescriptors = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: sortDateAscending)
         
-        let query = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: [sortDescriptors], resultsHandler: queryResultsHandler as! (HKSampleQuery, [HKSample]?, Error?) -> Void)
+        let query = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: [sortDescriptors], resultsHandler: backgroundQueryResultHandler)
         
         self.hkHealthStore.execute(query)
     }

@@ -14,11 +14,17 @@ import Alamofire
 
 class CSVDataSync: NSObject {
     
+    enum FileFormat: String {
+        case None
+        case HealthData
+        case SessionMetadata
+    }
+    
     /**
      List of datasets (in csv format) that must be downloaded.
      */
     static let csvDataURLs: [String] = [
-         "https://www.dropbox.com/s/36vlywzpxw2hixn/fitbit-minified.csv?dl=1"
+         "https://dl.dropboxusercontent.com/u/15940305/sample-health-data/participant-1/session-1/session1-metadata.csv"
     ]
     
     /**
@@ -94,49 +100,90 @@ class CSVDataSync: NSObject {
         let dataArrayWR = NSArray(contentsOfCSVURL: localPath)
 
         //first header/column should always be date or date-time
-        guard var dataArray = dataArrayWR, let headers = dataArray[0] as? [String] else { return }
+        guard let dataNSArray = dataArrayWR, var dataArray = Array(dataNSArray) as? [[String]] else { return }
         
-        // drop the first row in the array, which is just headers
-        dataArray = Array(dataArray.dropFirst()) as NSArray
+        let headers = dataArray[0]
         
-        let dateHeader = headers[0]
+        var format: FileFormat = .None
         
-        if(dateHeader != "date" && dateHeader != "date-time") {
-            return
+        if headers[0] == "participantId" && headers[1] == "sessionId" && headers[2] == "timestamp" {
+            format = .HealthData
+        } else if headers == ["id", "name", "desc", "startTime", "stopTime"] {
+            format = .SessionMetadata
         }
         
-        for row in dataArray {
-            guard let rowData = row as? [String] else { continue }
-            
-            let dateStr = rowData[0]
-            let dateFormatter = DateFormatter()
-            
-            if dateHeader == "date" {
-                dateFormatter.dateFormat = "MM/dd/yy"
-            }
-            
-            guard let dateObj = dateFormatter.date(from: dateStr) else { continue }
-            
-            for (index, itemInRow) in rowData.enumerated() {
-                if index == 0 {
-                    continue
-                }
-                
-                do {
-                    let healthObj = try HealthData.saveToRealm(headers[index], date: dateObj, source: "csv", origin: .CSV)
-                    //                    let healthObj = try HealthData.saveToRealm(headers[index], date: dateObj, source: "csv")
-                    let _ = try HealthDataValue.saveToRealm("value", value: itemInRow, healthObj: healthObj)
-                    
-                    //                    try ObjectIDMap.store(realmID: healthObj.id, healthkitUUID: nil, serverUUID: nil)
-                } catch {
-                    print(error)
-                }
-            }
+        switch format {
+        case .HealthData:
+            parseHealthData(dataArray)
+        case .SessionMetadata:
+            parseSessionMetadata(dataArray)
+        default:
+            break
         }
         
         print("Done parsing CSV Contents")
         print("Deleting File")
         deleteFile(localPath)
+    }
+    
+    private class func parseSessionMetadata(_ data: [[String]]) {
+        //headers
+        let headers = data[0]
+        
+        // drop the first row in the array, which is just headers
+        let dataArray = Array(data.dropFirst())
+        
+        for rowData in dataArray {
+            
+            let id = rowData[0]
+            let name = rowData[1]
+            let description = rowData[2]
+            
+            var startTime = Date()
+            if let startTimeUnix = Double(rowData[3]) {
+                startTime = Date(timeIntervalSince1970: startTimeUnix)
+            }
+            
+            var endTime = Date()
+            if let endTimeUnix = Double(rowData[4]) {
+                endTime = Date(timeIntervalSince1970: endTimeUnix)
+            }
+            
+            do {
+                try Session.saveToRealm(id, name: name, description: description, startTime: startTime, endTime: endTime)
+            } catch {
+                print(error)
+            }
+        }
+        
+    }
+    
+    private class func parseHealthData(_ data: [[String]]) {
+        let headers = data[0]
+        
+        // drop the first row in the array, which is just headers
+        let dataArray = Array(data.dropFirst())
+        
+        for rowData in dataArray {
+            let participantId = rowData[0]
+            let sessionId = rowData[1]
+            
+            guard let unixTimestamp = Double(rowData[2]) else { continue }
+            let dateObj = Date(timeIntervalSince1970: unixTimestamp)
+            
+            for (index, itemInRow) in rowData.enumerated() {
+                if index <= 2 {
+                    continue
+                }
+                
+                do {
+                    let healthObj = try HealthData.saveToRealm(headers[index], date: dateObj, source: "csv", participantId: participantId, sessionId: sessionId) //, origin: .CSV)
+                    let _ = try HealthDataValue.saveToRealm("value", value: itemInRow, healthObj: healthObj)
+                } catch {
+                    print(error)
+                }
+            }
+        }
     }
     
     

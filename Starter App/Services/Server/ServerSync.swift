@@ -90,13 +90,16 @@ class ServerSync: NSObject {
             let dateInSeconds = document["dateInSeconds"] as! Double
             let insertionDateInSeconds = document["insertionDateInSeconds"] as! Double
             
+            let participantId = document["participantId"] as! String
+            let sessionId = document["participantId"] as! String
+            
             if insertionDateInSeconds > self.lastSyncTimestamp.timeIntervalSince1970 {
                 self.lastSyncTimestamp = Date(timeIntervalSince1970: insertionDateInSeconds)
             }
             
             let data = document["data"] as! [String:NSObject]
             
-            if let _ = HealthData.find(usingSecondsSince1970: insertionDateInSeconds) {
+            if let _ = HealthData.find(usingSecondsSince1970: insertionDateInSeconds, andType: healthObjType) {
                 //dont do anything if object already exists
             } else {
                
@@ -104,7 +107,7 @@ class ServerSync: NSObject {
                 let date = Date(timeIntervalSince1970: dateInSeconds)
                 
                 do {
-                    let healthObj = try HealthData.saveToRealm(healthObjType, date: date, source: sourceName, origin: .Server)
+                    let healthObj = try HealthData.saveToRealm(healthObjType, date: date, source: sourceName, participantId: participantId, sessionId: sessionId) //, origin: .Server)
                     
                     for (key, value) in data {
                         let _ = try HealthDataValue.saveToRealm(key, value: String(describing: value), healthObj: healthObj)
@@ -147,6 +150,8 @@ class ServerSync: NSObject {
         documentBody["dateInSeconds"] = healthObj.date!.timeIntervalSince1970 as NSObject?
         documentBody["data"] = dataDictionary as NSObject?
         documentBody["sourceName"] = healthObj.source! as NSObject?
+        documentBody["participantId"] = healthObj.participantId! as NSObject?
+        documentBody["sessionId"] = healthObj.sessionId! as NSObject?
         
         // throw an error here
         guard documentBody.count != 0 else { return }

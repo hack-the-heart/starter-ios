@@ -237,7 +237,7 @@ class HealthKitSync: NSObject {
         }
         
         do {
-            if let healthDataObj = HealthData.find(usingDate: date)   {
+            if let healthDataObj = HealthData.find(usingDate: date, andType: shortString)   {
                 let objs = healthDataObj.dataObjects.filter({ (healthDataValue) -> Bool in
                     return healthDataValue.label == dataValueName && healthDataValue.value == String(value)
                 })
@@ -249,7 +249,7 @@ class HealthKitSync: NSObject {
             }
             
             //save to realm
-            let healthObj = try HealthData.saveToRealm(shortString, date: date, source: sourceName, origin:.HealthKit)
+            let healthObj = try HealthData.saveToRealm(shortString, date: date, source: sourceName, participantId: "-1", sessionId: "-1")
             let _ = try HealthDataValue.saveToRealm(dataValueName, value: String(value), healthObj: healthObj)
             
             ServerSync.sharedInstance.uploadData_ToServer(withRealmID: healthObj.id)

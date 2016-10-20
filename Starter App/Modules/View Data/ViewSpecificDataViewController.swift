@@ -109,19 +109,16 @@ class ViewSpecificDataViewController: UIViewController, UITableViewDataSource, U
         cell.title.text = dataValuesStr
         
         //set date
-        if let date = healthObj.date {
-            let formatter = DateFormatter()
-            formatter.dateStyle = DateFormatter.Style.short
-            formatter.timeStyle = .short
-            
-            let dateString = formatter.string(from: date)
-            
-            cell.subtitle.text = dateString
-        } else {
-            cell.subtitle.text = "Unknown"
-        }
+        let date = healthObj.date
+        let formatter = DateFormatter()
+        formatter.dateStyle = DateFormatter.Style.short
+        formatter.timeStyle = .short
+        
+        let dateString = formatter.string(from: date)
+        
+        cell.subtitle.text = dateString
         
         return cell
     }
-
+    
 }

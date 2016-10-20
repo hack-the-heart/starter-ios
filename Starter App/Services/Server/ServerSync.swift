@@ -147,11 +147,14 @@ class ServerSync: NSObject {
         }
         
         documentBody["healthObjType"] = healthObj.type as NSObject?
-        documentBody["dateInSeconds"] = healthObj.date!.timeIntervalSince1970 as NSObject?
+        documentBody["dateInSeconds"] = healthObj.date.timeIntervalSince1970 as NSObject?
         documentBody["data"] = dataDictionary as NSObject?
-        documentBody["sourceName"] = healthObj.source! as NSObject?
-        documentBody["participantId"] = healthObj.participantId! as NSObject?
-        documentBody["sessionId"] = healthObj.sessionId! as NSObject?
+        documentBody["sourceName"] = healthObj.source as NSObject?
+        documentBody["participantId"] = healthObj.participantId as NSObject?
+        
+        if let sessionId = healthObj.sessionId {
+            documentBody["sessionId"] = sessionId as NSObject?
+        }
         
         // throw an error here
         guard documentBody.count != 0 else { return }

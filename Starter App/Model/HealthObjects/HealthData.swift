@@ -13,11 +13,11 @@ import RealmSwift
 class HealthData: Object {
     
     dynamic var id: String = UUID().uuidString
-    dynamic var source: String?
-    dynamic var date: Date?
-    dynamic var type: String?
+    dynamic var source: String = ""
+    dynamic var date: Date = Date()
+    dynamic var type: String = ""
     
-    dynamic var participantId: String?
+    dynamic var participantId: String = ""
     dynamic var sessionId: String?
     //    dynamic var origin: String?
     
@@ -26,12 +26,13 @@ class HealthData: Object {
      */
     let dataObjects = LinkingObjects(fromType: HealthDataValue.self, property: "healthObject")
     
-    class func saveToRealm(_ type: String, date: Date, source: String, participantId: String, sessionId: String, overrideExisting: Bool = false) throws -> HealthData  {
+    class func saveToRealm(_ type: String, date: Date, source: String, participantId: String, sessionId: String?, overrideExisting: Bool = false) throws -> HealthData  {
         let realm = try! Realm()
         
         if let healthDataObj = HealthData.find(usingDate: date, andType: type) {
             if overrideExisting {
                 try realm.write {
+                    realm.delete(healthDataObj.dataObjects)
                     realm.delete(healthDataObj)
                 }                
             } else {

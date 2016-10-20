@@ -24,7 +24,7 @@ class CSVDataSync: NSObject {
      List of datasets (in csv format) that must be downloaded.
      */
     static let csvDataURLs: [String] = [
-         "https://dl.dropboxusercontent.com/u/15940305/sample-health-data/participant-1/session-1/session1-metadata.csv"
+        "https://dl.boxcloud.com/d/1/nogJVcsNsG_VgFpjwz6H9mGFOeTSuYVXqnwWTY6nNGV2hzUTmc24jzaPhjo0wUG0RqaeGcD6Cm6hqWWhjK9ZFt94VnbGptcSkjAUMAzWAuZuQclzr0FJCtPXZi6z7JOUsWD3HgJ6nkgFJtAgS1k_CnHjAPi8WRlX2zL6lIP28mFXoAeO7px68aM3AARbKKrqfKcJIJb59swm4hvUPpL7kOy4QKmuWWDqubDYNEK7XTOwLxdTxiImibMZgEg6FutKI0x0YupSxCqkD3gTFikgLSAidjEvLmEbs30TjFQeRlEEPxcl-LMOg6QQ4HsEQpPv5ukw4-NYn5UBYMik1U0dX7qkNQ98V0d8M_skPysb9W1BmV8X82kGPKFD_DdUgQYhOx_1tnpZOF934E1m4GxtyZu2MJ2g-hr-nLUQtIhcUBZzz2Bd3eA4ILG6KOUFwgcqXz9rnUUUAt88lVPph_Ib_ysMa2sbOKA1YtrinNFxcL0SWIrrf1eiuvBAco6KuYZPkn7ILzcTnadBTpoTEKTSLKIlueVoQ2cqyoE33zi-y3sJXyZS1D0ddUhlfVIYcvlMsa2CkQDNTBGl9M1JmZ6ssOVt_1vRhpQUqftp7WZacL6PuGVBWNehwlRJUf6RSF34pUYxCIJAnJX1A7hxHAV_otOORdVVbIHVJIngAJzmwVYUk7h9f8U6zxnDJXc_LcWeN3VJWMPwEBvJ2VF_9VGtBjOkLwQwgVtOHXUbNB-2z7wtiKpZCVMlS40rS-kNA5Z3Gv0p6WIyEhYV_rfngD02abh46fpMXyy0IV582CX4832edU6MqXZJAwiKYRoX2zLpRwd9v-U2cmxT54zf98WvOgN9PBAoWgtA0-vXf1egtX2jgwXvOXuV8tVe38qW6gRv8ekZHcA4GAk4zfWg_iOrdt-RtKOAxuy68MAKID1zJ5fmFTjHTwEY-CUVoGWB9PVQRCU_b109MorP8j1uo3AYNfYcSLJARwrBoau8FBleUC1HzKB_F5eLSN_GEAiy6eX4wioxmxkAkZh96R8Yotjfne-oGd-_MestSEN8KERkNZVAOHucwspQe9v6VXuQKoOQJ8GnvdZqI2lSnM_0C_P1N6D-mVNm7sMsCz_xiPi0mpntWBoEkcO_N5bmtT0b7bt2MwZUXyu4gymxahdzMPaeDnjg5rBkHfPspoNGld_wQgiWwMgTLARwsMxSqEpo1klGsILwy5bAJco8bJQGErKgwgxXjDE./download"
     ]
     
     /**
@@ -32,12 +32,14 @@ class CSVDataSync: NSObject {
      If the dataset has already been downloaded, it will not download it again. This is tracked through storing records of data downloads in Realm.
      */
     class func retrieveAllCSVData() {
-        let realm = try! Realm()
-        
-        for url in csvDataURLs {
-            let records = realm.objects(DataDownloadRecord.self).filter("url == %@", url)
-            if records.count == 0 {
-                CSVDataSync.downloadAndStoreData(url)
+        DispatchQueue.global(qos: .background).async {
+            let realm = try! Realm()
+            
+            for url in csvDataURLs {
+                let records = realm.objects(DataDownloadRecord.self).filter("url == %@", url)
+                if records.count == 0 {
+                    CSVDataSync.downloadAndStoreData(url)
+                }
             }
         }
     }
@@ -71,7 +73,7 @@ class CSVDataSync: NSObject {
      */
     fileprivate class func retrieveData(_ fileWebURL: String, completed: @escaping (Bool, [[String: String]]?, NSError?) -> (Void)) {
         
-
+        
         let destination: DownloadRequest.DownloadFileDestination = { _, _ in
             var documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             documentsURL.appendPathComponent("data-\(String(NSDate().timeIntervalSince1970)).csv")
@@ -83,7 +85,10 @@ class CSVDataSync: NSObject {
             print(response)
             
             if response.error == nil, let fileURL = response.destinationURL {
-                parseCSVContents(fileURL)
+                
+                DispatchQueue.global(qos: .background).async {
+                    parseCSVContents(fileURL)
+                }
             }
         }
     }
@@ -98,7 +103,7 @@ class CSVDataSync: NSObject {
      */
     private class func parseCSVContents(_ localPath: URL)  {
         let dataArrayWR = NSArray(contentsOfCSVURL: localPath)
-
+        
         //first header/column should always be date or date-time
         guard let dataNSArray = dataArrayWR, var dataArray = Array(dataNSArray) as? [[String]] else { return }
         
@@ -106,7 +111,7 @@ class CSVDataSync: NSObject {
         
         var format: FileFormat = .None
         
-        if headers[0] == "participantId" && headers[1] == "sessionId" && headers[2] == "timestamp" {
+        if headers.contains("participant-id") && headers.contains("timestamp") {
             format = .HealthData
         } else if headers == ["id", "name", "desc", "startTime", "stopTime"] {
             format = .SessionMetadata
@@ -165,19 +170,32 @@ class CSVDataSync: NSObject {
         let dataArray = Array(data.dropFirst())
         
         for rowData in dataArray {
-            let participantId = rowData[0]
-            let sessionId = rowData[1]
+            var indexesToIgnore: [Int] = []
             
-            guard let unixTimestamp = Double(rowData[2]) else { continue }
+            guard let participantIdIndex = headers.index(of: "participant-id"), let timestampIndex = headers.index(of: "timestamp") else { continue }
+            
+            let participantId = rowData[participantIdIndex]
+            let timestampStr = rowData[timestampIndex]
+            
+            indexesToIgnore.append(participantIdIndex)
+            indexesToIgnore.append(timestampIndex)
+            
+            var sessionId: String? = nil
+            if let sessionIdIndex = headers.index(of: "sessionId") {
+                indexesToIgnore.append(sessionIdIndex)
+                sessionId = rowData[sessionIdIndex]
+            }
+            
+            guard let unixTimestamp = Double(timestampStr) else { continue }
             let dateObj = Date(timeIntervalSince1970: unixTimestamp)
             
             for (index, itemInRow) in rowData.enumerated() {
-                if index <= 2 {
+                if indexesToIgnore.contains(index) {
                     continue
                 }
                 
                 do {
-                    let healthObj = try HealthData.saveToRealm(headers[index], date: dateObj, source: "csv", participantId: participantId, sessionId: sessionId) //, origin: .CSV)
+                    let healthObj = try HealthData.saveToRealm(headers[index], date: dateObj, source: "csv", participantId: participantId, sessionId: sessionId, overrideExisting: true) //, origin: .CSV)
                     let _ = try HealthDataValue.saveToRealm("value", value: itemInRow, healthObj: healthObj)
                 } catch {
                     print(error)

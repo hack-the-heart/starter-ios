@@ -18,6 +18,10 @@ class DataDownloadRecord: Object {
     dynamic var url: String?
     dynamic var date: Date?
     
+    override class func primaryKey() -> String? {
+        return "url"
+    }
+    
     class func saveToRealm(_ url: String, date: Date) throws -> DataDownloadRecord  {
         let realm = try! Realm()
         
@@ -26,7 +30,7 @@ class DataDownloadRecord: Object {
         record.date = date
         
         try realm.write {
-            realm.add(record)
+            realm.add(record, update: true)
         }
         
         return record

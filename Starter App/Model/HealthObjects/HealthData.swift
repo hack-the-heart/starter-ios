@@ -12,24 +12,55 @@ import RealmSwift
 /// A HealthData that contains generic information such as type, source, date, and etc. Health specific data is not stored here. See HealthDataValue.
 class HealthData: Object {
     
-    dynamic var id: String = UUID().uuidString
-    dynamic var source: String = ""
-    dynamic var date: Date = Date()
-    dynamic var type: String = ""
+    dynamic var id: String = ""
     
-    dynamic var participantId: String = ""
+    dynamic var source: String = "" {
+        didSet {
+            id = compoundIdValue()
+        }
+    }
+    
+    dynamic var date: Date = Date() {
+        didSet {
+            id = compoundIdValue()
+        }
+    }
+    
+    dynamic var type: String = "" {
+        didSet {
+            id = compoundIdValue()
+        }
+    }
+    
+    dynamic var participantId: String = "" {
+        didSet {
+            id = compoundIdValue()
+        }
+    }
+    
     dynamic var sessionId: String?
-    //    dynamic var origin: String?
     
     /**
      Realm specific property to pull in all HealthDataValue objects that have self as the healthObject.
      */
     let dataObjects = LinkingObjects(fromType: HealthDataValue.self, property: "healthObject")
     
+    public override static func primaryKey() -> String? {
+        return "id"
+    }
+    
+    private func compoundIdValue() -> String {
+        return HealthData.generateCompoundId(date: date, participantId: participantId, source: source, type: type)
+    }
+    
+    // class functions
+    
     class func saveToRealm(_ type: String, date: Date, source: String, participantId: String, sessionId: String?, overrideExisting: Bool = false) throws -> HealthData  {
         let realm = try! Realm()
         
-        if let healthDataObj = HealthData.find(usingDate: date, andType: type) {
+        let compoundId = HealthData.generateCompoundId(date: date, participantId: participantId, source: source, type: type)
+        
+        if let healthDataObj = HealthData.find(id: compoundId) {
             if overrideExisting {
                 try realm.write {
                     realm.delete(healthDataObj.dataObjects)
@@ -54,14 +85,10 @@ class HealthData: Object {
         return healthObj
     }
     
-    class func find(usingSecondsSince1970 seconds: TimeInterval, andType type: String) -> HealthData? {
-        return find(usingDate: Date(timeIntervalSince1970: seconds), andType: type)
-    }
-    
-    class func find(usingDate date: Date, andType type: String) -> HealthData? {
+    class func find(id: String) -> HealthData? {
         let realm = try! Realm()
         
-        let objects = realm.objects(HealthData.self).filter("date == %@ AND type == %@", date, type)
+        let objects = realm.objects(HealthData.self).filter("id == %@", id)
         
         if objects.count == 0 {
             return nil
@@ -70,5 +97,13 @@ class HealthData: Object {
         return objects[0]
     }
     
+    class func generateCompoundId(date: Date, participantId: String, source: String, type: String) -> String {
+        let timestamp = String(describing: date.timeIntervalSince1970)
+        return HealthData.generateCompoundId(timestamp: timestamp, participantId: participantId, source: source, type: type)
+    }
     
+    class func generateCompoundId(timestamp: String, participantId: String, source: String, type: String) -> String {
+        let id = timestamp + participantId + source + type
+        return id
+    }
 }

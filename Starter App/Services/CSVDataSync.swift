@@ -23,8 +23,8 @@ class CSVDataSync: NSObject {
     /**
      List of datasets (in csv format) that must be downloaded.
      */
-    static let csvDataURLs: [String] = [
-        "https://dl.boxcloud.com/d/1/nogJVcsNsG_VgFpjwz6H9mGFOeTSuYVXqnwWTY6nNGV2hzUTmc24jzaPhjo0wUG0RqaeGcD6Cm6hqWWhjK9ZFt94VnbGptcSkjAUMAzWAuZuQclzr0FJCtPXZi6z7JOUsWD3HgJ6nkgFJtAgS1k_CnHjAPi8WRlX2zL6lIP28mFXoAeO7px68aM3AARbKKrqfKcJIJb59swm4hvUPpL7kOy4QKmuWWDqubDYNEK7XTOwLxdTxiImibMZgEg6FutKI0x0YupSxCqkD3gTFikgLSAidjEvLmEbs30TjFQeRlEEPxcl-LMOg6QQ4HsEQpPv5ukw4-NYn5UBYMik1U0dX7qkNQ98V0d8M_skPysb9W1BmV8X82kGPKFD_DdUgQYhOx_1tnpZOF934E1m4GxtyZu2MJ2g-hr-nLUQtIhcUBZzz2Bd3eA4ILG6KOUFwgcqXz9rnUUUAt88lVPph_Ib_ysMa2sbOKA1YtrinNFxcL0SWIrrf1eiuvBAco6KuYZPkn7ILzcTnadBTpoTEKTSLKIlueVoQ2cqyoE33zi-y3sJXyZS1D0ddUhlfVIYcvlMsa2CkQDNTBGl9M1JmZ6ssOVt_1vRhpQUqftp7WZacL6PuGVBWNehwlRJUf6RSF34pUYxCIJAnJX1A7hxHAV_otOORdVVbIHVJIngAJzmwVYUk7h9f8U6zxnDJXc_LcWeN3VJWMPwEBvJ2VF_9VGtBjOkLwQwgVtOHXUbNB-2z7wtiKpZCVMlS40rS-kNA5Z3Gv0p6WIyEhYV_rfngD02abh46fpMXyy0IV582CX4832edU6MqXZJAwiKYRoX2zLpRwd9v-U2cmxT54zf98WvOgN9PBAoWgtA0-vXf1egtX2jgwXvOXuV8tVe38qW6gRv8ekZHcA4GAk4zfWg_iOrdt-RtKOAxuy68MAKID1zJ5fmFTjHTwEY-CUVoGWB9PVQRCU_b109MorP8j1uo3AYNfYcSLJARwrBoau8FBleUC1HzKB_F5eLSN_GEAiy6eX4wioxmxkAkZh96R8Yotjfne-oGd-_MestSEN8KERkNZVAOHucwspQe9v6VXuQKoOQJ8GnvdZqI2lSnM_0C_P1N6D-mVNm7sMsCz_xiPi0mpntWBoEkcO_N5bmtT0b7bt2MwZUXyu4gymxahdzMPaeDnjg5rBkHfPspoNGld_wQgiWwMgTLARwsMxSqEpo1klGsILwy5bAJco8bJQGErKgwgxXjDE./download"
+    static let urlsArr: [String] = [
+//        "https://dl.dropboxusercontent.com/u/15940305/health-tech-hack/participant-1/1.csv"
     ]
     
     /**
@@ -35,7 +35,7 @@ class CSVDataSync: NSObject {
         DispatchQueue.global(qos: .background).async {
             let realm = try! Realm()
             
-            for url in csvDataURLs {
+            for url in urlsArr {
                 let records = realm.objects(DataDownloadRecord.self).filter("url == %@", url)
                 if records.count == 0 {
                     CSVDataSync.downloadAndStoreData(url)
@@ -50,18 +50,45 @@ class CSVDataSync: NSObject {
      - parameter url: url where the dataset must be downloaded from
      */
     fileprivate class func downloadAndStoreData(_ url: String) {
+        var csvURL: String? = url
+        var fileCount = 1;
+        
+        // check to see if the url is pointing to a folder or a csv file
+        if url.isFolderPath() {
+            csvURL = url + String(fileCount) + ".csv"
+        }
+        
+        
         //sample csv file for now
-        CSVDataSync.retrieveData(url) { (success, data, error) -> (Void) in
-            guard success else {
-                print("error retrieving data for url: \(url). error: \(error)")
-                return
+        while csvURL != nil {
+            let semaphore = DispatchSemaphore(value: 0)
+            
+            CSVDataSync.retrieveData(csvURL!) { (success, error) -> (Void) in
+                defer {
+                    if success && url.isFolderPath() {
+                        fileCount += 1
+                        csvURL = url + String(fileCount) + ".csv"
+                        print(csvURL)
+                    } else {
+                        csvURL = nil
+                    }
+                    
+                    semaphore.signal()
+                }
+                
+                guard success else {
+                    print("error retrieving data for url: \(csvURL). error: \(error)")
+                    return
+                }
+                
+                do {
+                    let _ = try DataDownloadRecord.saveToRealm(url, date: Date())
+                } catch {
+                    print(error)
+                }
             }
             
-            do {
-                let _ = try DataDownloadRecord.saveToRealm(url, date: Date())
-            } catch {
-                print(error)
-            }
+             semaphore.wait()
         }
     }
     
@@ -71,7 +98,7 @@ class CSVDataSync: NSObject {
      - parameter fileWebURL:   url where the dataset must be downloaded from
      - parameter completed: (success, array of records (Stored as dictionaries), error) -> (Void)
      */
-    fileprivate class func retrieveData(_ fileWebURL: String, completed: @escaping (Bool, [[String: String]]?, NSError?) -> (Void)) {
+    fileprivate class func retrieveData(_ fileWebURL: String, completed: @escaping (Bool, Error?) -> (Void)) {
         
         
         let destination: DownloadRequest.DownloadFileDestination = { _, _ in
@@ -84,12 +111,22 @@ class CSVDataSync: NSObject {
         Alamofire.download(fileWebURL, to: destination).response { response in
             print(response)
             
-            if response.error == nil, let fileURL = response.destinationURL {
+            if response.response?.statusCode != 404 && response.error == nil, let fileURL = response.destinationURL {
                 
                 DispatchQueue.global(qos: .background).async {
                     parseCSVContents(fileURL)
                 }
+                
+                DispatchQueue.main.async {
+                    completed(true, nil)
+                }
+            } else {
+                
+                DispatchQueue.main.async {
+                    completed(false, response.error)
+                }
             }
+            
         }
     }
     
@@ -213,5 +250,12 @@ class CSVDataSync: NSObject {
         } catch let error as NSError {
             print(error.debugDescription)
         }
+    }
+    
+}
+
+extension String {
+    func isFolderPath() -> Bool {
+        return self.lastCharacter() == "/"
     }
 }

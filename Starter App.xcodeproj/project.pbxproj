@@ -10,6 +10,7 @@
 		680E6CC61DB7C5E90040B481 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 680E6CC51DB7C5E90040B481 /* Session.swift */; };
 		682129C01CF87ED4004F3C0B /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 682129BF1CF87ED4004F3C0B /* HealthKitManager.swift */; };
 		682129C61CF91562004F3C0B /* HKSampleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 682129C51CF91562004F3C0B /* HKSampleExtension.swift */; };
+		6848FA911DC107F200449310 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6848FA901DC107F200449310 /* StringExtension.swift */; };
 		684AA9EE1D57FFBA00098CBA /* CSVDataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 684AA9ED1D57FFBA00098CBA /* CSVDataSync.swift */; };
 		686C24CD1D1A268C00467D4F /* ViewSpecificDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 686C24CC1D1A268C00467D4F /* ViewSpecificDataViewController.swift */; };
 		6890ED011D03A25900B9759C /* ViewData.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6890ED001D03A25900B9759C /* ViewData.storyboard */; };
@@ -43,6 +44,7 @@
 		682129B81CF8762F004F3C0B /* HomeKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HomeKit.framework; path = System/Library/Frameworks/HomeKit.framework; sourceTree = SDKROOT; };
 		682129BF1CF87ED4004F3C0B /* HealthKitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = HealthKitManager.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		682129C51CF91562004F3C0B /* HKSampleExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKSampleExtension.swift; sourceTree = "<group>"; };
+		6848FA901DC107F200449310 /* StringExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StringExtension.swift; path = Extensions/StringExtension.swift; sourceTree = "<group>"; };
 		684AA9ED1D57FFBA00098CBA /* CSVDataSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = CSVDataSync.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		686C24CC1D1A268C00467D4F /* ViewSpecificDataViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ViewSpecificDataViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		6890ED001D03A25900B9759C /* ViewData.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ViewData.storyboard; sourceTree = "<group>"; };
@@ -113,6 +115,7 @@
 		682129C31CF914B5004F3C0B /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				6848FA8F1DC107DB00449310 /* Extensions */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -124,6 +127,14 @@
 			);
 			name = Extensions;
 			path = ../../Utils/Extensions;
+			sourceTree = "<group>";
+		};
+		6848FA8F1DC107DB00449310 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				6848FA901DC107F200449310 /* StringExtension.swift */,
+			);
+			name = Extensions;
 			sourceTree = "<group>";
 		};
 		684AA9EA1D57FE9300098CBA /* CSV Parser */ = {
@@ -389,6 +400,7 @@
 				68F20FA91D6B52C3009CE79E /* HealthDataType.swift in Sources */,
 				686C24CD1D1A268C00467D4F /* ViewSpecificDataViewController.swift in Sources */,
 				682129C61CF91562004F3C0B /* HKSampleExtension.swift in Sources */,
+				6848FA911DC107F200449310 /* StringExtension.swift in Sources */,
 				8F6F739A1CF3F6550099920A /* AppDelegate.swift in Sources */,
 				6890ED041D03A42000B9759C /* HealthDataTableViewCell.swift in Sources */,
 				684AA9EE1D57FFBA00098CBA /* CSVDataSync.swift in Sources */,

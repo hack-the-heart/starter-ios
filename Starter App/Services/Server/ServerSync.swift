@@ -87,11 +87,15 @@ class ServerSync: NSObject {
 //            let serverUUID = document["_id"] as! String
             let sourceName = document["sourceName"] as! String
             let healthObjType = document["healthObjType"] as! String
+            
             let dateInSeconds = document["dateInSeconds"] as! Double
+            let date = Date(timeIntervalSince1970: dateInSeconds)
+            
             let insertionDateInSeconds = document["insertionDateInSeconds"] as! Double
             
             let participantId = document["participantId"] as! String
-            let sessionId = document["participantId"] as! String
+            
+            let sessionId = document["participantId"] as? String
             
             if insertionDateInSeconds > self.lastSyncTimestamp.timeIntervalSince1970 {
                 self.lastSyncTimestamp = Date(timeIntervalSince1970: insertionDateInSeconds)
@@ -99,13 +103,10 @@ class ServerSync: NSObject {
             
             let data = document["data"] as! [String:NSObject]
             
-            if let _ = HealthData.find(usingSecondsSince1970: insertionDateInSeconds, andType: healthObjType) {
+            let compoundId = HealthData.generateCompoundId(date: date, participantId: participantId, source: sourceName, type: healthObjType)
+            if let _ = HealthData.find(id: compoundId) {
                 //dont do anything if object already exists
             } else {
-               
-                
-                let date = Date(timeIntervalSince1970: dateInSeconds)
-                
                 do {
                     let healthObj = try HealthData.saveToRealm(healthObjType, date: date, source: sourceName, participantId: participantId, sessionId: sessionId) //, origin: .Server)
                     

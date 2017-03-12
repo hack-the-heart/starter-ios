@@ -54,56 +54,12 @@ class ServerSync: NSObject {
      Fetches all data since last sync timestamp and store it to realm.
      */
     func fetchAllData_SinceLastSync_FromServer() {
-        let selector = [
-            "$gt" : String(describing: lastSyncTimestamp.timeIntervalSince1970)
-        ]
+        let findOperationSelector = [ "insertionDateInSeconds": ["$gt": lastSyncTimestamp.timeIntervalSince1970]]
         
-        let findOperationSelector = [
-            "insertionDateInSeconds": selector as NSObject
-        ]
+        let sortOptions = [Sort(field: "insertionDateInSeconds", sort: .asc)]
         
-        let sort = [Sort(field: "insertionDateInSeconds", sort: .asc)]
-        
-        let findOperation = FindDocumentsOperation(selector: findOperationSelector, databaseName: databaseName, fields: nil, limit: nil, skip: nil, sort: sort, bookmark: nil, useIndex: nil, r: nil, documentFoundHandler: { (document) in
-            print("Found document \(document)")
-            
-            //            let serverUUID = document["_id"] as! String
-            let sourceName = document["sourceName"] as! String
-            let healthObjType = document["healthObjType"] as! String
-            
-            let dateInSeconds = document["dateInSeconds"] as! Double
-            let date = Date(timeIntervalSince1970: dateInSeconds)
-            
-            let insertionDateInSeconds = document["insertionDateInSeconds"] as! Double
-            
-            let participantId = document["participantId"] as! String
-            
-            let sessionId = document["participantId"] as? String
-            
-            if insertionDateInSeconds > self.lastSyncTimestamp.timeIntervalSince1970 {
-                self.lastSyncTimestamp = Date(timeIntervalSince1970: insertionDateInSeconds)
-            }
-            
-            let data = document["data"] as! [String:NSObject]
-            
-            let compoundId = HealthData.generateCompoundId(date: date, participantId: participantId, source: sourceName, type: healthObjType)
-            if let _ = HealthData.find(id: compoundId) {
-                //dont do anything if object already exists
-            } else {
-                do {
-                    let healthObj = try HealthData.saveToRealm(healthObjType, date: date, source: sourceName, participantId: participantId, sessionId: sessionId) //, origin: .Server)
-                    
-                    for (key, value) in data {
-                        let _ = try HealthDataValue.saveToRealm(key, value: String(describing: value), healthObj: healthObj)
-                    }
-                    
-                    // if you wanted to store this data to healthkit, then uncomment this line
-                    //try HealthKitSync.saveRealmData_ToHealthKit(withRealmID: weightHealthObj.id)
-                } catch {
-                    // do something with error
-                }
-            }
-        }) { (documents, httpInfo, error) in
+        let findOperation = FindDocumentsOperation(selector: findOperationSelector, databaseName: databaseName, sort: sortOptions,
+                                                   documentFoundHandler: documentFoundHandler) { (response, httpInfo, error) in
             if let _ = error {
                 print("Failed to query database for documents: \(error)")
             } else {
@@ -112,6 +68,66 @@ class ServerSync: NSObject {
         }
         
         cloudantClient?.add(operation: findOperation)
+    }
+    
+    func documentFoundHandler(document: [String : Any]) {
+        print("Found document \(document)")
+        
+        //let serverUUID = document["_id"] as! String
+        var sourceName = "unknown"
+        if let docSourceName = document["sourceName"] as? String {
+            sourceName = docSourceName
+        }
+        
+        var healthObjType = "unknown"
+        if let docHealthObjType = document["healthObjType"] as? String {
+            healthObjType = docHealthObjType
+        }
+        
+        var date = Date(timeIntervalSince1970: 0)
+        if let docDateInSeconds = document["dateInSeconds"] as? Double {
+            date =  Date(timeIntervalSince1970: docDateInSeconds)
+        }
+        
+        var insertionDateInSeconds = 0.0
+        if let docInsertionDateInSeconds = document["insertionDateInSeconds"] as? Double {
+            insertionDateInSeconds = docInsertionDateInSeconds
+        }
+        
+        var participantId = "-1"
+        if let docParticipantId = document["participantId"] as? String {
+            participantId = docParticipantId
+        }
+        
+        let sessionId = document["participantId"] as? String
+        
+        if insertionDateInSeconds > self.lastSyncTimestamp.timeIntervalSince1970 {
+            self.lastSyncTimestamp = Date(timeIntervalSince1970: insertionDateInSeconds)
+        }
+        
+        guard let data = document["data"] as? [String:Any] else {
+            // should probably throw an error here
+            print("Something went wrong. Could not parse 'data' in document from cloudant db.")
+            return
+        }
+        
+        let compoundId = HealthData.generateCompoundId(date: date, participantId: participantId, source: sourceName, type: healthObjType)
+        if let _ = HealthData.find(id: compoundId) {
+            //dont do anything if object already exists
+        } else {
+            do {
+                let healthObj = try HealthData.saveToRealm(healthObjType, date: date, source: sourceName, participantId: participantId, sessionId: sessionId) //, origin: .Server)
+                
+                for (key, value) in data {
+                    let _ = try HealthDataValue.saveToRealm(key, value: String(describing: value), healthObj: healthObj)
+                }
+                
+                // if you wanted to store this data to healthkit, then uncomment this line
+                //try HealthKitSync.saveRealmData_ToHealthKit(withRealmID: weightHealthObj.id)
+            } catch {
+                // do something with error
+            }
+        }
     }
     
     /**

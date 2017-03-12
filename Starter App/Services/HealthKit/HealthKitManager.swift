@@ -209,9 +209,9 @@ class HealthKitManager {
                     
                     self.hkHealthStore.execute(query)
                     
-                    print("Enabled background delivery for \(sampleType)")
+                    print("Enabled background delivery for \t\(sampleType.description)")
                 } else {
-                    print("Error enabling background delivery for \(sampleType). Error: \(error)")
+                    print("Error enabling background delivery for \(sampleType.description). Error: \(error)")
                 }
             }
         }

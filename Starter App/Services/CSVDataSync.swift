@@ -68,7 +68,7 @@ class CSVDataSync: NSObject {
                     if success && url.isFolderPath() {
                         fileCount += 1
                         csvURL = url + String(fileCount) + ".csv"
-                        print(csvURL)
+                        print(csvURL ?? "CSV URL is nil")
                     } else {
                         csvURL = nil
                     }
@@ -170,7 +170,7 @@ class CSVDataSync: NSObject {
     
     private class func parseSessionMetadata(_ data: [[String]]) {
         //headers
-        let headers = data[0]
+        let _ = data[0]
         
         // drop the first row in the array, which is just headers
         let dataArray = Array(data.dropFirst())

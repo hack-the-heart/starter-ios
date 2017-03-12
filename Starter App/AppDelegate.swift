@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //detect if we are running on a simulator to print realm path (for debugging purposes)
         #if (arch(i386) || arch(x86_64)) && (os(iOS) || os(watchOS) || os(tvOS))
             let realm = try! Realm()
-            print(realm.configuration.fileURL?.absoluteString)
+            print(realm.configuration.fileURL?.absoluteString ?? "Realm File URL is nil")
         #endif
         
         //initialize server sync and healthkit sync

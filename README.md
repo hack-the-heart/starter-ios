@@ -1,13 +1,17 @@
 # Starter iOS App
 
-Check out the starter ios app source code here:
-https://github.com/health-tech-hack/starter-ios
-
 ## Introduction
 The starter app has the ability to pull data from HealthKit, store it locally, and sync with the server. As an added bonus, the iOS application can also read in data from CSV files (in a specific format) and store it locally.
- 
+
+## Prerequisites
+1. [CocoaPods](https://cocoapods.org/)
+
+## Setup
+1. Run `pod install` in the root directory of the project
+2. Open the `.xcworkspace` file and build
+
 ## Realm
-The database we are using for local storage is Realm: http://realm.io. You should check it out even if you are not using the starter apps.
+The database we are using for local storage is Realm: http://realm.io. You should check it out even if you are not using the starter apps!
 
 ### Data Model
 The data model only consists of two model classes: `HealthData` and `HealthDataModel`. Although this seems generic and simplistic, it allows us to store data from almost all data types.
@@ -64,9 +68,9 @@ If you would like to add support for handling new data types from HealthKit, do 
 
 ## Server Syncing
 
-The starter iOS apps syncs with NodeJS/CloudantDB. See the [Starter NodeJS](https://thesaadismail.gitbooks.io/health-tech-hack/content/starter_nodejs.html) page for more information on getting that setup.
+The starter iOS apps syncs with NodeJS/CloudantDB. See the [Starter NodeJS](https://github.com/health-hacks/starter-nodejs-server) page for more information on getting that setup.
 
-Check out `ServerSync.swift` to see more details. We are using the[ cloudant-objective](https://github.com/cloudant/objective-cloudant) to facilitate pulling down and store objects in the CloudantDB (on our NodeJS server).
+Check out `ServerSync.swift` to see more details. We are using the [swift-cloudant](https://github.com/cloudant/swift-cloudant) library to facilitate pulling down and store objects in the CloudantDB (on our NodeJS server).
 
 **Setup**
 

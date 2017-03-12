@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import ObjectiveCloudant
+import SwiftCloudant
 import RealmSwift
 import HealthKit
 
@@ -21,9 +21,7 @@ class ServerSync: NSObject {
     let dbUsername = "859c612f-1dc8-48fe-98ff-b9cdc6a340e6-bluemix"
     let dbPassword = "b65e1a73c02ac1fa23fe84255163ad176903ea1b63aac449882186e6bda16829"
     
-    
-    var cloudantClient: CDTCouchDBClient?
-    var sensorDataDB: CDTDatabase?
+    var cloudantClient: CouchDBClient?
     
     /// lastSyncTimestamp is used to determine when the app last synced. 
     /// This is used to fetch new records from the last synced timestamp.
@@ -46,8 +44,7 @@ class ServerSync: NSObject {
         super.init()
         
         if let url = URL(string: databaseUrl) {
-            cloudantClient = CDTCouchDBClient(for: url, username: dbUsername, password: dbPassword)
-            sensorDataDB = cloudantClient?[databaseName]
+            cloudantClient = CouchDBClient(url: url, username: dbUsername, password: dbPassword)
         }
         
         self.fetchAllData_SinceLastSync_FromServer()
@@ -57,34 +54,20 @@ class ServerSync: NSObject {
      Fetches all data since last sync timestamp and store it to realm.
      */
     func fetchAllData_SinceLastSync_FromServer() {
-        guard let sensorDataDB = sensorDataDB else { return }
-        
-        let findOperation = CDTQueryFindDocumentsOperation()
-        
-        findOperation.sort = [
-            ["insertionDateInSeconds" : "asc"]
-        ]
-        
         let selector = [
             "$gt" : String(describing: lastSyncTimestamp.timeIntervalSince1970)
         ]
         
-        findOperation.selector = [
+        let findOperationSelector = [
             "insertionDateInSeconds": selector as NSObject
         ]
         
-        findOperation.findDocumentsCompletionBlock = {(bookmark, error) -> Void in
-            if let _ = error {
-                print("Failed to query database for documents: \(error)")
-            } else {
-                print("Query completed")
-            }
-        }
+        let sort = [Sort(field: "insertionDateInSeconds", sort: .asc)]
         
-        findOperation.documentFoundBlock = {(document) -> Void in
+        let findOperation = FindDocumentsOperation(selector: findOperationSelector, databaseName: databaseName, fields: nil, limit: nil, skip: nil, sort: sort, bookmark: nil, useIndex: nil, r: nil, documentFoundHandler: { (document) in
             print("Found document \(document)")
             
-//            let serverUUID = document["_id"] as! String
+            //            let serverUUID = document["_id"] as! String
             let sourceName = document["sourceName"] as! String
             let healthObjType = document["healthObjType"] as! String
             
@@ -120,9 +103,15 @@ class ServerSync: NSObject {
                     // do something with error
                 }
             }
+        }) { (documents, httpInfo, error) in
+            if let _ = error {
+                print("Failed to query database for documents: \(error)")
+            } else {
+                print("Query completed")
+            }
         }
         
-        sensorDataDB.add(findOperation)
+        cloudantClient?.add(operation: findOperation)
     }
     
     /**
@@ -131,8 +120,6 @@ class ServerSync: NSObject {
      - parameter realmID: pull in the HealthData and HealthDataValue obj using the realmId and upload that data
      */
     func uploadData_ToServer(withRealmID realmID: String) {
-        guard let sensorDataDB = sensorDataDB else { return }
-        
         let realm = try! Realm()
         
         var documentBody: [String:NSObject] = [:]
@@ -161,14 +148,14 @@ class ServerSync: NSObject {
         guard documentBody.count != 0 else { return }
         
         //TODO: check to see if a document with the same timestamp exists first
-        
-        sensorDataDB.putDocument(withId: UUID().uuidString, body: documentBody, completionHandler: {
-            (docId, revId, statusCode, operationError) -> Void in
+        let putOperation = PutDocumentOperation(id: UUID().uuidString, revision: nil, body: documentBody, databaseName: databaseName) { (response, httpInfo, operationError) in
             if let error = operationError {
                 print("Encountered an error creating document. Error: \(error)")
             } else {
-                print("Created document \(docId), at revision \(revId)")
+                print("Created document \(response)")
             }
-        })
+        }
+        
+        cloudantClient?.add(operation: putOperation)
     }
 }

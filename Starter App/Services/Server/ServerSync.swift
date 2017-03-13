@@ -13,13 +13,13 @@ import HealthKit
 
 /// ServerSync.swift pulls down data from the server and stores it locally.
 class ServerSync: NSObject {
-    static let sharedInstance = ServerSync()
+    static let sharedInstance = ServerSync(dbName: "", dbURL: "", dbUsername: "", dbPassword: "")
     
     /// database credentials
-    let databaseName = "sensor_data"
-    let databaseUrl = "https://859c612f-1dc8-48fe-98ff-b9cdc6a340e6-bluemix.cloudant.com"
-    let dbUsername = "859c612f-1dc8-48fe-98ff-b9cdc6a340e6-bluemix"
-    let dbPassword = "b65e1a73c02ac1fa23fe84255163ad176903ea1b63aac449882186e6bda16829"
+    let databaseName: String
+    let databaseUrl: String
+    let dbUsername: String
+    let dbPassword: String
     
     var cloudantClient: CouchDBClient?
     
@@ -40,7 +40,12 @@ class ServerSync: NSObject {
         }
     }
     
-    override init() {
+    init(dbName: String, dbURL: String, dbUsername: String, dbPassword: String) {
+        self.databaseName = dbName
+        self.databaseUrl = dbURL
+        self.dbUsername = dbUsername
+        self.dbPassword = dbPassword
+        
         super.init()
         
         if let url = URL(string: databaseUrl) {

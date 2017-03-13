@@ -45,11 +45,11 @@ class HealthData: Object {
      */
     let dataObjects = LinkingObjects(fromType: HealthDataValue.self, property: "healthObject")
     
-    public override static func primaryKey() -> String? {
+    open override static func primaryKey() -> String? {
         return "id"
     }
     
-    private func compoundIdValue() -> String {
+    fileprivate func compoundIdValue() -> String {
         return HealthData.generateCompoundId(date: date, participantId: participantId, source: source, type: type)
     }
     

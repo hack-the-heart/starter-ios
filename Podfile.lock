@@ -1,11 +1,11 @@
 PODS:
-  - Alamofire (4.0.1)
+  - Alamofire (4.3.0)
   - CHCSVParser (2.1.0)
-  - Realm (2.0.1):
-    - Realm/Headers (= 2.0.1)
-  - Realm/Headers (2.0.1)
-  - RealmSwift (2.0.1):
-    - Realm (= 2.0.1)
+  - Realm (2.4.2):
+    - Realm/Headers (= 2.4.2)
+  - Realm/Headers (2.4.2)
+  - RealmSwift (2.4.2):
+    - Realm (= 2.4.2)
   - SwiftCloudant (0.6.0)
 
 DEPENDENCIES:
@@ -15,12 +15,12 @@ DEPENDENCIES:
   - SwiftCloudant
 
 SPEC CHECKSUMS:
-  Alamofire: 7682d43245de14874acd142ec137b144aa1dd335
+  Alamofire: 856a113053a7bc9cbe5d6367a555d773fc5cfef7
   CHCSVParser: 3bcc7bdb72111a31222e95d57eacceefe4e537e8
-  Realm: 0557ee0e4ab4f0936c90e370056d1ed6265f93d6
-  RealmSwift: 64e00af79bdcd7d2a7a23fdc1cb3faf22b80ae4c
+  Realm: d27b758e12d62a3371879a065d4c40aa212c5a54
+  RealmSwift: 9556c0fe0f0cfecacfb755ae9e68ff379fc6bead
   SwiftCloudant: c8427870e723c6a421c50326689719d570306951
 
-PODFILE CHECKSUM: 1e614bc1c3e3764827530388f5f12e69648f3c05
+PODFILE CHECKSUM: 56441dfe49a4d2e6e7daccd1f1d7406874a78698
 
-COCOAPODS: 1.2.0
+COCOAPODS: 1.0.1

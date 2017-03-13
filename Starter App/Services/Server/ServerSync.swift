@@ -75,7 +75,7 @@ class ServerSync: NSObject {
         cloudantClient?.add(operation: findOperation)
     }
     
-    func documentFoundHandler(document: [String : Any]) {
+    func documentFoundHandler(_ document: [String : Any]) {
         print("Found document \(document)")
         
         //let serverUUID = document["_id"] as! String

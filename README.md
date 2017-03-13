@@ -8,9 +8,36 @@ The starter app has the ability to pull data from HealthKit, store it locally, a
 
 ## Setup
 1. Run `pod install` in the root directory of the project
-2. Open the `.xcworkspace` file and build
+2. Open the `.xcworkspace` file and Build & Run
 
-## Realm
+## Architecture
+Three operations will occur when the app is launched:
+- Sync with Server (`ServerSync.swift`)
+- Sync with HealthKit (`HealthKitSync.swift`)
+- Download and Store CSV Data (`CSVDataSync.swift`)
+
+### HealthKitSync.swift
+Check out `HealthKitSync.swift` and `HealthKitManager.swift` to see how we are working with HealthKit. 
+
+HealthKitSync pulls data down from HealthKit and stores it in Realm; it will not push data into HealthKit. If you would like to store data into HealthKit, check out `saveRealmData_ToHealthKit()` in `HealthKitSync.swift`.
+
+If you would like to add support for handling new data types from HealthKit, do a project wide search for this text `//TODO-ADD-NEW-DATA-TYPE`. These are all the places where you would need to add new strings, constants, logic, and etc for your new data type.
+
+### ServerSync.swift
+If you are including a server component into your system, the app will sync all data with the NodeJS/CloudantDB server. See the [Starter NodeJS](https://github.com/health-hacks/starter-nodejs-server) page for more information on getting that setup.
+
+Check out `ServerSync.swift` to see more details. We are using the [swift-cloudant](https://github.com/cloudant/swift-cloudant) library to facilitate pulling down and store objects in the CloudantDB (on our NodeJS server).
+
+**Setup**
+
+Create a new set of credentials in your Cloudant DB Admin page or use the one that was created during the `Starter NodeJS` setup. Fill out these credentials in `ServerSync.swift`.
+
+### Download and Store CSV Data
+We also download and store CSV data in Realm (which gets synced up to the server) when you specify CSV files in the `urlsArr` in `CSVDataSync.swift`. The CSV data must be in a specific [format](https://healthhacks.gitbooks.io/developer/content/datasets_overview.html) to get parsed.
+
+## Data
+
+### Realm
 The database we are using for local storage is Realm: http://realm.io. You should check it out even if you are not using the starter apps!
 
 ### Data Model
@@ -59,21 +86,3 @@ class DataDownloadRecord: Object {
 ```
 
 DataDownloadRecord is used to keep track of the CSV files have been downloaded. This is to make sure we do not download the CSV file twice on app launch.
-
-## HealthKit 
-
-Check out `HealthKitSync.swift` and `HealthKitManager.swift` to see how we are working with HealthKit. 
-
-If you would like to add support for handling new data types from HealthKit, do a project wide search for this text `//TODO-ADD-NEW-DATA-TYPE`. These are all the places where you would need to add new strings, constants, logic, and etc for your new data type.
-
-## Server Syncing
-
-The starter iOS apps syncs with NodeJS/CloudantDB. See the [Starter NodeJS](https://github.com/health-hacks/starter-nodejs-server) page for more information on getting that setup.
-
-Check out `ServerSync.swift` to see more details. We are using the [swift-cloudant](https://github.com/cloudant/swift-cloudant) library to facilitate pulling down and store objects in the CloudantDB (on our NodeJS server).
-
-**Setup**
-
-Create a new set of credentials in your Cloudant DB Admin page or use the one that was created during the `Starter NodeJS` setup. Fill out these credentials in `ServerSync.swift`.
-
-

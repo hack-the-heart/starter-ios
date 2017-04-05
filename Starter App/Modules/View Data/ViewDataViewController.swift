@@ -91,6 +91,7 @@ class ViewDataViewController: UIViewController, UITableViewDataSource, UITableVi
         }
         
         cell.title.text = healthObjects[(indexPath as NSIndexPath).item]
+        cell.subtitle.text = ""
         cell.healthObjType = healthObjects[(indexPath as NSIndexPath).item]
         
         return cell

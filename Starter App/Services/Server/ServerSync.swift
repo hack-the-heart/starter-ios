@@ -13,7 +13,7 @@ import HealthKit
 
 /// ServerSync.swift pulls down data from the server and stores it locally.
 class ServerSync: NSObject {
-    static let sharedInstance = ServerSync(dbName: "", dbURL: "", dbUsername: "", dbPassword: "")
+    static let sharedInstance = ServerSync(dbName: "sensor_data", dbURL: "", dbUsername: "", dbPassword: "")
     
     /// database credentials
     let databaseName: String

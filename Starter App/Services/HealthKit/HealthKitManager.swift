@@ -211,7 +211,7 @@ class HealthKitManager {
                     
                     print("Enabled background delivery for \t\(sampleType.description)")
                 } else {
-                    print("Error enabling background delivery for \(sampleType.description). Error: \(error)")
+                    print("Error enabling background delivery for \(sampleType.description). Error: \(error?.localizedDescription ?? "none")")
                 }
             }
         }

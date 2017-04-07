@@ -66,7 +66,7 @@ class ServerSync: NSObject {
         let findOperation = FindDocumentsOperation(selector: findOperationSelector, databaseName: databaseName, sort: sortOptions,
                                                    documentFoundHandler: documentFoundHandler) { (response, httpInfo, error) in
             if let _ = error {
-                print("Failed to query database for documents: \(error)")
+                print("Failed to query database for documents: \(error?.localizedDescription ?? "none")")
             } else {
                 print("Query completed")
             }
@@ -173,7 +173,7 @@ class ServerSync: NSObject {
             if let error = operationError {
                 print("Encountered an error creating document. Error: \(error)")
             } else {
-                print("Created document \(response)")
+                print("Created document \(response?.description ?? "none")")
             }
         }
         

@@ -77,7 +77,7 @@ class CSVDataSync: NSObject {
                 }
                 
                 guard success else {
-                    print("error retrieving data for url: \(csvURL). error: \(error)")
+                    print("error retrieving data for url: \(csvURL ?? "none"). error: \(error?.localizedDescription ?? "none")")
                     return
                 }
                 

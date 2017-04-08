@@ -24,7 +24,7 @@ class CSVDataSync: NSObject {
      List of datasets (in csv format) that must be downloaded.
      */
     static let urlsArr: [String] = [
-//        "https://dl.dropboxusercontent.com/u/15940305/health-tech-hack/participant-1/1.csv"
+//        "https://raw.githubusercontent.com/health-hacks/datasets/master/ihealth-bp/participant3/1.csv"
     ]
     
     /**
@@ -234,6 +234,8 @@ class CSVDataSync: NSObject {
                 do {
                     let healthObj = try HealthData.saveToRealm(headers[index], date: dateObj, source: "csv", participantId: participantId, sessionId: sessionId, overrideExisting: true) //, origin: .CSV)
                     let _ = try HealthDataValue.saveToRealm("value", value: itemInRow, healthObj: healthObj)
+                    
+                    ServerSync.sharedInstance.uploadData_ToServer(withRealmID: healthObj.id)
                 } catch {
                     print(error)
                 }
